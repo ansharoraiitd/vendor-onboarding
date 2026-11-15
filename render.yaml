@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: vendor-onboarding
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: DATA_DIR
+        value: /tmp/data
+      - key: EXTRACTION_CACHE_DIR
+        value: /tmp/data/extraction_cache
+      - key: EXTRACTOR_MODE
+        value: auto
+      - key: DEMO_MODE
+        value: "true"
+      - key: HMAC_SECRET
+        generateValue: true
+      

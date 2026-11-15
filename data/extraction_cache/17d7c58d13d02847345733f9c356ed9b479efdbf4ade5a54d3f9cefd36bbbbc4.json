@@ -1,0 +1,22 @@
+{
+  "doc_type": "pan_card",
+  "doc_type_detected": "pan_card",
+  "fields": {
+    "pan_number": "AADCD4567F",
+    "name_on_pan": "Zenith Logistics Private Limited",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-13T14:55:18Z",
+    "_pdf_mod_date": "2026-11-13T14:55:18Z",
+    "_claimed_issue_date": "2022-01-01"
+  },
+  "confidences": {
+    "pan_number": 0.99,
+    "name_on_pan": 0.96
+  },
+  "snippets": {
+    "pan_number": "AADCD4567F",
+    "name_on_pan": "Name: Zenith Logistics Private Limited"
+  },
+  "raw_text": "INCOME TAX DEPARTMENT\nPermanent Account Number Card\nName: Zenith Logistics Private Limited\nPAN: AADCD4567F\nDate of Issue: 2022-01-01",
+  "extractor_type": "text_layer_regex"
+}

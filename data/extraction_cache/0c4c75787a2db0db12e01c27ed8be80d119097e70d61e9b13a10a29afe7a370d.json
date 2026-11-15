@@ -1,0 +1,21 @@
+{
+  "doc_type": "pan_card",
+  "doc_type_detected": "pan_card",
+  "fields": {
+    "pan_number": "AACCC1234D",
+    "name_on_pan": "Someone Industrial Systems",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:33:10Z",
+    "_pdf_mod_date": "2026-11-15T02:33:10Z"
+  },
+  "confidences": {
+    "pan_number": 0.99,
+    "name_on_pan": 0.96
+  },
+  "snippets": {
+    "pan_number": "AACCC1234D",
+    "name_on_pan": "Name: Someone Industrial Systems"
+  },
+  "raw_text": "INCOME TAX DEPARTMENT - GOVT OF INDIA\nName: Someone Industrial Systems\nPAN: AACCC1234D",
+  "extractor_type": "text_layer_regex"
+}

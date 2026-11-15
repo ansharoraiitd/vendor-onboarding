@@ -1,0 +1,21 @@
+{
+  "doc_type": "pan_card",
+  "doc_type_detected": "pan_card",
+  "fields": {
+    "pan_number": "AABPP1414P",
+    "name_on_pan": "Mismatched PAN Entity Private Limited",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z"
+  },
+  "confidences": {
+    "pan_number": 0.99,
+    "name_on_pan": 0.96
+  },
+  "snippets": {
+    "pan_number": "AABPP1414P",
+    "name_on_pan": "Name: Mismatched PAN Entity Private Limited"
+  },
+  "raw_text": "GOVERNMENT OF INDIA - INCOME TAX DEPARTMENT\nIdentity Verification Card / Ref: NSDL-TIN-8892\nName: Mismatched PAN Entity Private Limited\nPermanent Account Number: AABPP1414P\nFather's Name: Late R. K. Sharma",
+  "extractor_type": "text_layer_regex"
+}

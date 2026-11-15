@@ -1,0 +1,22 @@
+{
+  "doc_type": "pan_card",
+  "doc_type_detected": "pan_card",
+  "fields": {
+    "pan_number": "BBBPP9999Z",
+    "name_on_pan": "Apex Tech Solutions Private Limited",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-13T14:55:18Z",
+    "_pdf_mod_date": "2026-11-13T14:55:18Z",
+    "_claimed_issue_date": "2022-01-01"
+  },
+  "confidences": {
+    "pan_number": 0.99,
+    "name_on_pan": 0.96
+  },
+  "snippets": {
+    "pan_number": "BBBPP9999Z",
+    "name_on_pan": "Name: Apex Tech Solutions Private Limited"
+  },
+  "raw_text": "INCOME TAX DEPARTMENT\nPermanent Account Number Card\nName: Apex Tech Solutions Private Limited\nPAN: BBBPP9999Z\nDate of Issue: 2022-01-01",
+  "extractor_type": "text_layer_regex"
+}

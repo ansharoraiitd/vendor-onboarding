@@ -1,0 +1,31 @@
+{
+  "doc_type": "gst_certificate",
+  "doc_type_detected": "gst_certificate",
+  "fields": {
+    "gstin_on_cert": "27AAGPG7890J1ZY",
+    "legal_name_on_cert": "Omkar Precision Fabricators",
+    "trade_name_on_cert": "Omkar Precision Fabricators",
+    "principal_place_state_code": "27",
+    "address_on_cert": "5 Artisan Alley, Nashik",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-13T14:18:29Z",
+    "_pdf_mod_date": "2026-11-13T14:18:29Z",
+    "_claimed_issue_date": "2022-04-01"
+  },
+  "confidences": {
+    "gstin_on_cert": 0.99,
+    "legal_name_on_cert": 0.97,
+    "trade_name_on_cert": 0.95,
+    "principal_place_state_code": 0.98,
+    "address_on_cert": 0.92
+  },
+  "snippets": {
+    "gstin_on_cert": "27AAGPG7890J1ZY",
+    "legal_name_on_cert": "Legal Name of Business: Omkar Precision Fabricators",
+    "trade_name_on_cert": "Trade Name: Omkar Precision Fabricators",
+    "principal_place_state_code": "State Code: 27",
+    "address_on_cert": "Principal Place of Business: 5 Artisan Alley, Nashik"
+  },
+  "raw_text": "GOODS AND SERVICES TAX REGISTRATION CERTIFICATE\nLegal Name of Business: Omkar Precision Fabricators\nTrade Name: Omkar Precision Fabricators\nGSTIN: 27AAGPG7890J1ZY\nState Code: 27\nPrincipal Place of Business: 5 Artisan Alley, Nashik\nDate of Liability: 2022-04-01",
+  "extractor_type": "text_layer_regex"
+}

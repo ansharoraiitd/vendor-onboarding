@@ -1,0 +1,25 @@
+{
+  "doc_type": "coi",
+  "doc_type_detected": "coi",
+  "fields": {
+    "cin_on_coi": "U72900MH2015PTC808008",
+    "company_name_on_coi": "Zenith Software Technologies Private Limited",
+    "incorporation_date": "2015-06-15",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z",
+    "_claimed_issue_date": "2015-06-15"
+  },
+  "confidences": {
+    "cin_on_coi": 0.99,
+    "company_name_on_coi": 0.95,
+    "incorporation_date": 0.95
+  },
+  "snippets": {
+    "cin_on_coi": "U72900MH2015PTC808008",
+    "company_name_on_coi": "Company Name: Zenith Software Technologies Private Limited",
+    "incorporation_date": "Date of Incorporation: 2015-06-15"
+  },
+  "raw_text": "CERTIFICATE OF INCORPORATION\nCompany Name: Zenith Software Technologies Private Limited\nCIN: U72900MH2015PTC808008\nDate of Incorporation: 2015-06-15",
+  "extractor_type": "text_layer_regex"
+}

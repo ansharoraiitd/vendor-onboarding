@@ -1,0 +1,24 @@
+{
+  "doc_type": "gst_certificate",
+  "doc_type_detected": "gst_certificate",
+  "fields": {
+    "gstin_on_cert": "27AABCA1001A1Z5",
+    "legal_name_on_cert": "APEX ENGINEERING SYSTEMS PRIVATE LIMITED",
+    "principal_place_state_code": "27",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:50:25Z",
+    "_pdf_mod_date": "2026-11-15T02:50:25Z"
+  },
+  "confidences": {
+    "gstin_on_cert": 0.99,
+    "legal_name_on_cert": 0.97,
+    "principal_place_state_code": 0.98
+  },
+  "snippets": {
+    "gstin_on_cert": "27AABCA1001A1Z5",
+    "legal_name_on_cert": "LEGAL NAME: APEX ENGINEERING SYSTEMS PRIVATE LIMITED",
+    "principal_place_state_code": "STATE CODE: 27"
+  },
+  "raw_text": "FORM GST REG-06 - REGISTRATION CERTIFICATE\nREGISTRATION NUMBER (GSTIN): 27AABCA1001A1Z5\nLEGAL NAME: APEX ENGINEERING SYSTEMS PRIVATE LIMITED\nSTATE CODE: 27",
+  "extractor_type": "text_layer_regex"
+}

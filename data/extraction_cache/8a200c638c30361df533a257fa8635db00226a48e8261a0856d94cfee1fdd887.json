@@ -1,0 +1,24 @@
+{
+  "doc_type": "cancelled_cheque",
+  "doc_type_detected": "cancelled_cheque",
+  "fields": {
+    "account_holder_name": "Completely Different Enterprises LLP",
+    "ifsc_on_cheque": "HDFC0001234",
+    "account_last4_on_cheque": "5678",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T03:44:49Z",
+    "_pdf_mod_date": "2026-11-15T03:44:49Z"
+  },
+  "confidences": {
+    "account_holder_name": 0.96,
+    "ifsc_on_cheque": 0.99,
+    "account_last4_on_cheque": 0.95
+  },
+  "snippets": {
+    "account_holder_name": "Beneficiary Name: Completely Different Enterprises LLP",
+    "ifsc_on_cheque": "HDFC0001234",
+    "account_last4_on_cheque": "A/c Number: 50100012345678"
+  },
+  "raw_text": "HDFC BANK LIMITED - CANCELLED CHEQUE\nBeneficiary Name: Completely Different Enterprises LLP\nA/c Number: 50100012345678\nIFS Code: HDFC0001234",
+  "extractor_type": "text_layer_regex"
+}

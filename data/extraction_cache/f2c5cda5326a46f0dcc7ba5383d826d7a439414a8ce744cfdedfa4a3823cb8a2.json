@@ -1,0 +1,13 @@
+{
+  "doc_type": "cancelled_cheque",
+  "doc_type_detected": "unknown_document",
+  "fields": {
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:50:26Z",
+    "_pdf_mod_date": "2026-11-15T02:50:26Z"
+  },
+  "confidences": {},
+  "snippets": {},
+  "raw_text": "A BRIEF ESSAY ON MODERN ARCHITECTURE\nArchitecture is both the process and the product of sketching.\nBuildings in their architectural form are often perceived as cultural symbols.",
+  "extractor_type": "text_layer_regex"
+}

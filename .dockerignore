@@ -1,0 +1,15 @@
+.env
+key.env
+*.env
+*.key
+data/*.key
+data/extraction_cache/*.key
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.git
+.gitignore
+.DS_Store
+*.zip
+vendor_onboarding.db

@@ -1,0 +1,56 @@
+# policy.yaml — Vendor Onboarding Automation (v0.2)
+
+decision:
+  human_review_threshold: 20       # soft score >= this -> human_review
+
+bank_name_match:
+  pass_threshold: 90               # token-set ratio >= 90 -> pass
+  review_threshold: 75             # 75-89 -> warn (+10 risk); < 75 -> fixable/hard (see §3.5)
+  fail_score_contribution: 10      # soft score added for warn
+
+extraction:
+  min_confidence: 0.80             # below this -> downgrade hard check to fixable (§3.10)
+
+duplicate_detection:
+  name_fuzzy_threshold: 92         # token-set ratio for DV3 near-identical name
+  hmac_secret: ""                  # REQUIRED — set via HMAC_SECRET env var; never commit
+
+pdf_metadata:
+  editing_tool_score: 5
+  moddate_gap_days: 30             # ModDate - CreationDate threshold
+  moddate_gap_score: 3
+  impossible_date_score: 10
+  max_total_score: 10              # cap on combined PDF signals
+
+risk_weights:                      # soft-signal score contributions
+  adapter_unavailable: 5
+  bank_name_warn: 10
+  pdf_editing_tool: 5
+  pdf_moddate_gap: 3
+  pdf_impossible_date: 10
+  cin_state_mismatch: 5
+  duplicate_name_fuzzy: 15
+  gst_state_vs_address_state: 10
+
+adapters:
+  gstin_status: mock               # mock | live
+  mca_status: mock
+  debarment: mock
+  internal_blocklist: mock
+  ifsc_lookup: mock
+  pan_status: mock
+  notifier: outbox                 # outbox | smtp
+
+demo_mode: false                   # enables /audit/demo-tamper endpoint
+
+buyer:
+  name: "Acme Procurement Pvt Ltd"
+  gstin: "27AABCA1234A1Z5"
+
+required_documents:
+  proprietorship: [pan_card, gst_certificate, cancelled_cheque, address_proof]
+  partnership:    [pan_card, gst_certificate, cancelled_cheque, address_proof]
+  llp:            [pan_card, gst_certificate, cancelled_cheque, llpin_cert]
+  pvt_ltd:        [pan_card, gst_certificate, cancelled_cheque, coi]
+  pub_ltd:        [pan_card, gst_certificate, cancelled_cheque, coi]
+  section8:       [pan_card, gst_certificate, cancelled_cheque, coi]

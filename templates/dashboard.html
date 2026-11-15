@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Vendor Onboarding{% endblock %}
+{% block content %}
+
+<!-- KPI Strip -->
+<div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
+  {% set kpi_items = [
+    ("Total", kpis.total, "bg-white"),
+    ("Approved", kpis.approved, "bg-green-50"),
+    ("Pending", kpis.pending, "bg-amber-50"),
+    ("Rejected", kpis.rejected, "bg-red-50"),
+    ("Under Review", kpis.human_review, "bg-purple-50"),
+    ("Avg Risk", kpis.avg_risk ~ "/100", "bg-blue-50"),
+  ] %}
+  {% for label, val, bg in kpi_items %}
+  <div class="rounded-xl shadow-sm border border-gray-200 {{ bg }} p-4 text-center">
+    <div class="text-2xl font-bold text-gray-800">{{ val }}</div>
+    <div class="text-xs text-gray-500 mt-1">{{ label }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Filters -->
+<form method="get" class="flex flex-wrap gap-3 mb-4 items-end">
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Search name</label>
+    <input name="q" value="{{ filters.q }}" placeholder="Legal name…"
+           class="border border-gray-300 rounded px-3 py-1.5 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Status</label>
+    <select name="status" class="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+      <option value="">All</option>
+      {% for s in ["approved","pending","rejected","human_review","processing","submitted","error"] %}
+      <option value="{{ s }}" {% if filters.status == s %}selected{% endif %}>{{ s.replace("_"," ").title() }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">Entity type</label>
+    <select name="entity_type" class="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+      <option value="">All</option>
+      {% for et in ["proprietorship","partnership","llp","pvt_ltd","pub_ltd","section8"] %}
+      <option value="{{ et }}" {% if filters.entity_type == et %}selected{% endif %}>{{ et.replace("_"," ").title() }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="bg-indigo-600 text-white px-4 py-1.5 rounded text-sm hover:bg-indigo-700 transition">Filter</button>
+  <a href="/" class="text-sm text-gray-500 hover:underline self-center">Reset</a>
+  <a href="/submit" class="ml-auto bg-green-600 text-white px-4 py-1.5 rounded text-sm hover:bg-green-700 transition">+ New Submission</a>
+</form>
+
+<!-- Table -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+  <table class="min-w-full text-sm">
+    <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
+      <tr>
+        <th class="px-4 py-3 text-left">Legal Name</th>
+        <th class="px-4 py-3 text-left">Entity</th>
+        <th class="px-4 py-3 text-left">GSTIN</th>
+        <th class="px-4 py-3 text-left">Status</th>
+        <th class="px-4 py-3 text-left">Risk</th>
+        <th class="px-4 py-3 text-left">Attempt</th>
+        <th class="px-4 py-3 text-left">Submitted</th>
+        <th class="px-4 py-3 text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for row in rows %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 font-medium text-gray-900">{{ row.legal_name }}</td>
+        <td class="px-4 py-3 text-gray-500">{{ row.entity_type.replace("_"," ").title() }}</td>
+        <td class="px-4 py-3 text-gray-500 font-mono text-xs">{{ (row.gstin or "")[:15] }}</td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+            {% if row.status == 'approved' %}bg-green-100 text-green-700
+            {% elif row.status == 'rejected' %}bg-red-100 text-red-700
+            {% elif row.status == 'pending' %}bg-amber-100 text-amber-700
+            {% elif row.status == 'human_review' %}bg-purple-100 text-purple-700
+            {% elif row.status == 'error' %}bg-rose-100 text-rose-700 border border-rose-300
+            {% else %}bg-gray-100 text-gray-600{% endif %}">
+            {{ row.status.replace("_"," ").title() }}
+          </span>
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-1">
+            <div class="w-16 bg-gray-200 rounded-full h-1.5">
+              <div class="h-1.5 rounded-full
+                {% if (row.soft_risk_score or 0) >= 50 %}bg-red-500
+                {% elif (row.soft_risk_score or 0) >= 20 %}bg-amber-400
+                {% else %}bg-green-400{% endif %}"
+                style="width: {{ [row.soft_risk_score or 0, 100] | min }}%"></div>
+            </div>
+            <span class="text-xs text-gray-500">{{ row.soft_risk_score or 0 | int }}</span>
+          </div>
+        </td>
+        <td class="px-4 py-3 text-xs text-gray-500">{{ row.attempt_no }}</td>
+        <td class="px-4 py-3 text-xs text-gray-400">{{ (row.created_at or "")[:10] }}</td>
+        <td class="px-4 py-3 flex gap-2">
+          <a href="/submissions/{{ row.id }}/run" class="text-indigo-600 hover:underline text-xs">Run</a>
+          <a href="/submissions/{{ row.id }}/memo" class="text-green-600 hover:underline text-xs">Memo</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">No submissions found. <a href="/submit" class="text-indigo-600 hover:underline">Create one →</a></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

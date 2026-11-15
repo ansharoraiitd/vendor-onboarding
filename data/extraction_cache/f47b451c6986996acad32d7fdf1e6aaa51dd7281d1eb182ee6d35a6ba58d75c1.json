@@ -1,0 +1,24 @@
+{
+  "doc_type": "cancelled_cheque",
+  "doc_type_detected": "cancelled_cheque",
+  "fields": {
+    "account_holder_name": "M/s Greenfield Packaging Solutions Pvt Ltd Current A/C",
+    "ifsc_on_cheque": "KKBK0000987",
+    "account_last4_on_cheque": "6006",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z"
+  },
+  "confidences": {
+    "account_holder_name": 0.96,
+    "ifsc_on_cheque": 0.99,
+    "account_last4_on_cheque": 0.95
+  },
+  "snippets": {
+    "account_holder_name": "A/c Holder: M/s Greenfield Packaging Solutions Pvt Ltd Current A/C",
+    "ifsc_on_cheque": "KKBK0000987",
+    "account_last4_on_cheque": "A/c Number: XXXX XXXX 6006"
+  },
+  "raw_text": "ICICI BANK - CANCELLED CHEQUE\nIFSC: KKBK0000987\nA/c Number: XXXX XXXX 6006\nA/c Holder: M/s Greenfield Packaging Solutions Pvt Ltd Current A/C",
+  "extractor_type": "text_layer_regex"
+}

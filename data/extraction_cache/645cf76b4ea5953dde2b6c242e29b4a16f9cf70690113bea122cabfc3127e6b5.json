@@ -1,0 +1,21 @@
+{
+  "doc_type": "cancelled_cheque",
+  "doc_type_detected": "cancelled_cheque",
+  "fields": {
+    "ifsc_on_cheque": "SBIN0000300",
+    "account_last4_on_cheque": "7890",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:18:49Z",
+    "_pdf_mod_date": "2026-11-15T02:18:49Z"
+  },
+  "confidences": {
+    "ifsc_on_cheque": 0.99,
+    "account_last4_on_cheque": 0.95
+  },
+  "snippets": {
+    "ifsc_on_cheque": "SBIN0000300",
+    "account_last4_on_cheque": "Account: 1234567890"
+  },
+  "raw_text": "DOCUMENT - CANCELLED_CHEQUE\nName: Someone Industrial Systems\nAccount: 1234567890 IFSC: SBIN0000300",
+  "extractor_type": "text_layer_regex"
+}

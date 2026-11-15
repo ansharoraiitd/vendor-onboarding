@@ -1,0 +1,22 @@
+{
+  "doc_type": "pan_card",
+  "doc_type_detected": "pan_card",
+  "fields": {
+    "pan_number": "AAFFD4004D",
+    "name_on_pan": "DELTA AGRO EXPORTS LLP",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z",
+    "_claimed_issue_date": "2018-05-15"
+  },
+  "confidences": {
+    "pan_number": 0.99,
+    "name_on_pan": 0.96
+  },
+  "snippets": {
+    "pan_number": "AAFFD4004D",
+    "name_on_pan": "CARDHOLDER NAME: DELTA AGRO EXPORTS LLP"
+  },
+  "raw_text": "INCOME TAX DEPARTMENT - GOVT. OF INDIA\nPERMANENT ACCOUNT NUMBER: AAFFD4004D\nCARDHOLDER NAME: DELTA AGRO EXPORTS LLP\nDATE OF ISSUE: 2018-05-15",
+  "extractor_type": "text_layer_regex"
+}

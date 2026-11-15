@@ -1,0 +1,18 @@
+{
+  "doc_type": "gst_certificate",
+  "doc_type_detected": "gst_certificate",
+  "fields": {
+    "gstin_on_cert": "27AAECK1234G1Z5",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:18:49Z",
+    "_pdf_mod_date": "2026-11-15T02:18:49Z"
+  },
+  "confidences": {
+    "gstin_on_cert": 0.99
+  },
+  "snippets": {
+    "gstin_on_cert": "27AAECK1234G1Z5"
+  },
+  "raw_text": "DOCUMENT - GST_CERTIFICATE\nName: Someone Industrial Systems\nGSTIN: 27AAECK1234G1Z5",
+  "extractor_type": "text_layer_regex"
+}

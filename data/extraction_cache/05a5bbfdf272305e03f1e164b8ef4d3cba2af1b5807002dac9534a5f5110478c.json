@@ -1,0 +1,24 @@
+{
+  "doc_type": "udyam_cert",
+  "doc_type_detected": "udyam_cert",
+  "fields": {
+    "udyam_number": "UDYAM-GJ-00-0098765",
+    "udyam_category": "small",
+    "udyam_activity_type": "trading",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-13T14:18:29Z",
+    "_pdf_mod_date": "2026-11-13T14:18:29Z"
+  },
+  "confidences": {
+    "udyam_number": 0.99,
+    "udyam_category": 0.96,
+    "udyam_activity_type": 0.95
+  },
+  "snippets": {
+    "udyam_number": "UDYAM-GJ-00-0098765",
+    "udyam_category": "Small",
+    "udyam_activity_type": "Trading"
+  },
+  "raw_text": "UDYAM REGISTRATION CERTIFICATE\nEnterprise: Delta Commodities LLP\nUdyam Number: UDYAM-GJ-00-0098765\nCategory: Small\nActivity: Trading",
+  "extractor_type": "text_layer_regex"
+}

@@ -1,0 +1,25 @@
+{
+  "doc_type": "coi",
+  "doc_type_detected": "coi",
+  "fields": {
+    "cin_on_coi": "U24100MH2018PTC112233",
+    "company_name_on_coi": "Acme Industrial Systems Trading",
+    "incorporation_date": "2018-06-15",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:48:53Z",
+    "_pdf_mod_date": "2026-11-15T02:48:53Z",
+    "_claimed_issue_date": "2018-06-15"
+  },
+  "confidences": {
+    "cin_on_coi": 0.99,
+    "company_name_on_coi": 0.95,
+    "incorporation_date": 0.95
+  },
+  "snippets": {
+    "cin_on_coi": "U24100MH2018PTC112233",
+    "company_name_on_coi": "certify that: Acme Industrial Systems Trading",
+    "incorporation_date": "Date of Incorporation: 2018-06-15"
+  },
+  "raw_text": "CERTIFICATE OF INCORPORATION\nThis is to certify that: Acme Industrial Systems Trading\nCIN: U24100MH2018PTC112233\nDate of Incorporation: 2018-06-15",
+  "extractor_type": "text_layer_regex"
+}

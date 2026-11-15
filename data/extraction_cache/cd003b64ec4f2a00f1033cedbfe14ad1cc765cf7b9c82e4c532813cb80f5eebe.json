@@ -1,0 +1,21 @@
+{
+  "doc_type": "llpin_cert",
+  "doc_type_detected": "llpin_cert",
+  "fields": {
+    "llpin_on_cert": "AAA-4004",
+    "llp_name_on_cert": "Delta Agro Exports LLP",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:50:25Z",
+    "_pdf_mod_date": "2026-11-15T02:50:25Z"
+  },
+  "confidences": {
+    "llpin_on_cert": 0.98,
+    "llp_name_on_cert": 0.95
+  },
+  "snippets": {
+    "llpin_on_cert": "AAA-4004",
+    "llp_name_on_cert": "LLP Name: Delta Agro Exports LLP"
+  },
+  "raw_text": "LLP REGISTRATION CERTIFICATE\nLLP Name: Delta Agro Exports LLP\nLLPIN: AAA-4004",
+  "extractor_type": "text_layer_regex"
+}

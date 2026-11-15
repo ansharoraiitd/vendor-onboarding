@@ -1,0 +1,31 @@
+{
+  "doc_type": "gst_certificate",
+  "doc_type_detected": "gst_certificate",
+  "fields": {
+    "gstin_on_cert": "24AAFFF6789H1Z3",
+    "legal_name_on_cert": "Delta Commodities LLP",
+    "trade_name_on_cert": "Delta Commodities LLP",
+    "principal_place_state_code": "24",
+    "address_on_cert": "10 Trade Center, Ahmedabad",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:19:32Z",
+    "_pdf_mod_date": "2026-11-15T02:19:32Z",
+    "_claimed_issue_date": "2022-04-01"
+  },
+  "confidences": {
+    "gstin_on_cert": 0.99,
+    "legal_name_on_cert": 0.97,
+    "trade_name_on_cert": 0.95,
+    "principal_place_state_code": 0.98,
+    "address_on_cert": 0.92
+  },
+  "snippets": {
+    "gstin_on_cert": "24AAFFF6789H1Z3",
+    "legal_name_on_cert": "Legal Name of Business: Delta Commodities LLP",
+    "trade_name_on_cert": "Trade Name: Delta Commodities LLP",
+    "principal_place_state_code": "State Code: 24",
+    "address_on_cert": "Principal Place of Business: 10 Trade Center, Ahmedabad"
+  },
+  "raw_text": "GOODS AND SERVICES TAX REGISTRATION CERTIFICATE\nLegal Name of Business: Delta Commodities LLP\nTrade Name: Delta Commodities LLP\nGSTIN: 24AAFFF6789H1Z3\nState Code: 24\nPrincipal Place of Business: 10 Trade Center, Ahmedabad\nDate of Liability: 2022-04-01",
+  "extractor_type": "text_layer_regex"
+}

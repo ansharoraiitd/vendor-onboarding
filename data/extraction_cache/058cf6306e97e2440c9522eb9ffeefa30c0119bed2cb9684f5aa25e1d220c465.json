@@ -1,0 +1,22 @@
+{
+  "doc_type": "pan_card",
+  "doc_type_detected": "pan_card",
+  "fields": {
+    "pan_number": "AABCA1001A",
+    "name_on_pan": "APEX ENGINEERING SYSTEMS PRIVATE LIMITED",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z",
+    "_claimed_issue_date": "2018-05-15"
+  },
+  "confidences": {
+    "pan_number": 0.99,
+    "name_on_pan": 0.96
+  },
+  "snippets": {
+    "pan_number": "AABCA1001A",
+    "name_on_pan": "CARDHOLDER NAME: APEX ENGINEERING SYSTEMS PRIVATE LIMITED"
+  },
+  "raw_text": "INCOME TAX DEPARTMENT - GOVT. OF INDIA\nPERMANENT ACCOUNT NUMBER: AABCA1001A\nCARDHOLDER NAME: APEX ENGINEERING SYSTEMS PRIVATE LIMITED\nDATE OF ISSUE: 2018-05-15",
+  "extractor_type": "text_layer_regex"
+}

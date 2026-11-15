@@ -1,0 +1,24 @@
+{
+  "doc_type": "cancelled_cheque",
+  "doc_type_detected": "cancelled_cheque",
+  "fields": {
+    "account_holder_name": "SOMEONE INDUSTRIAL SYSTEMS",
+    "ifsc_on_cheque": "SBIN0000300",
+    "account_last4_on_cheque": "1111",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z"
+  },
+  "confidences": {
+    "account_holder_name": 0.96,
+    "ifsc_on_cheque": 0.99,
+    "account_last4_on_cheque": 0.95
+  },
+  "snippets": {
+    "account_holder_name": "BENEFICIARY NAME: SOMEONE INDUSTRIAL SYSTEMS",
+    "ifsc_on_cheque": "SBIN0000300",
+    "account_last4_on_cheque": "ACCOUNT NUMBER: XXXX XXXX 1111"
+  },
+  "raw_text": "STATE BANK OF INDIA - CANCELLED CHEQUE\nBENEFICIARY NAME: SOMEONE INDUSTRIAL SYSTEMS\nACCOUNT NUMBER: XXXX XXXX 1111\nIFS CODE: SBIN0000300",
+  "extractor_type": "text_layer_regex"
+}

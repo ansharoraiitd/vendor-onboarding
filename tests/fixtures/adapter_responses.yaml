@@ -1,0 +1,128 @@
+# Adapter fixture responses for MockAdapter
+# Structure: AdapterName -> primary_key -> {status: ..., ...extra fields}
+# Missing keys fall back to adapter-level defaults defined in mock.py
+
+PANStatusAdapter:
+  AABCU9603R1:
+    status: valid
+    name: "United India Insurance Company"
+  AADCB2230M:
+    status: valid
+    name: "Some Valid Company"
+  AAACR5055K:
+    status: valid
+    name: "Reliance Industries"
+  AABCT3518Q:
+    status: valid
+    name: "TATA Consultancy Services"
+  AAACI1289P:
+    status: valid
+    name: "ICICI Bank Limited"
+  BBBPP9999Z:
+    status: invalid
+    name: ""
+    reason: "PAN not found in ITD database"
+  CCCFM1234D:
+    status: missing
+    name: ""
+    reason: "No PAN provided"
+
+GSTINStatusAdapter:
+  27AABCU9603R1ZP:
+    status: active
+    legal_name: "United India Insurance Co Ltd"
+    state: "Maharashtra"
+  29AADCB2230M1Z9:
+    status: active
+    legal_name: "Some Karnataka Company"
+    state: "Karnataka"
+  07AAACR5055K1ZF:
+    status: active
+    legal_name: "Reliance Industries Ltd"
+    state: "Delhi"
+  19AABCT3518Q1ZP:
+    status: active
+    legal_name: "TCS West Bengal"
+    state: "West Bengal"
+  24AAACI1289P1ZG:
+    status: active
+    legal_name: "ICICI Bank Gujarat"
+    state: "Gujarat"
+  27BBBPP9999Z1Z0:
+    status: cancelled
+    legal_name: "Cancelled Entity"
+    cancellation_date: "2024-01-01"
+  33CCCFM1234D2Z3:
+    status: suspended
+    legal_name: "Suspended GST Entity"
+    suspension_date: "2025-06-01"
+
+MCAStatusAdapter:
+  U65110MH2000GOI018559:
+    status: active
+    company_name: "United India Insurance Co Ltd"
+    roc: "MCA-MH"
+  U12345KA2010PLC123456:
+    status: active
+    company_name: "Some Karnataka Company Pvt Ltd"
+    roc: "MCA-KA"
+  U99999MH2005PLC999999:
+    status: struck_off
+    company_name: "Struck Off Company"
+    struck_off_date: "2023-05-15"
+  U11111DL2015OPC111111:
+    status: under_liquidation
+    company_name: "Company In Liquidation"
+    liquidation_date: "2024-08-01"
+
+DebarmentAdapter:
+  # Keyed by PAN (primary identity used for debarment lookup)
+  AABCU9603R1:
+    status: clear
+    source: "CVC/GeM"
+  DEBARXXXXXX:
+    status: debarred
+    source: "GeM"
+    reason: "Quality failure — debarred until 2027-03-31"
+    debarred_until: "2027-03-31"
+  SUSPXXXXYYY:
+    status: suspended
+    source: "CVC"
+    reason: "Pending inquiry"
+
+IFSCAdapter:
+  SBIN0000300:
+    status: found
+    bank_name: "State Bank of India"
+    branch: "Mumbai Main"
+    city: "Mumbai"
+    state: "Maharashtra"
+  HDFC0001234:
+    status: found
+    bank_name: "HDFC Bank"
+    branch: "Delhi CP"
+    city: "New Delhi"
+    state: "Delhi"
+  ICIC0002456:
+    status: found
+    bank_name: "ICICI Bank"
+    branch: "Bangalore Koramangala"
+    city: "Bangalore"
+    state: "Karnataka"
+  PUNB0123400:
+    status: found
+    bank_name: "Punjab National Bank"
+    branch: "Chennai T Nagar"
+    city: "Chennai"
+    state: "Tamil Nadu"
+  XXXXXXXX000:
+    status: not_found
+    reason: "IFSC not in RBI master list"
+
+InternalBlocklistAdapter:
+  AABCU9603R1:
+    status: clear
+  BLOCKXXXYYY:
+    status: blocked
+    reason: "Fraud case — do not onboard"
+    blocked_since: "2024-11-01"

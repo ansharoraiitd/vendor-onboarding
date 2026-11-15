@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Vendor Onboarding{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .badge-approved    { @apply bg-green-100 text-green-800; }
+    .badge-pending     { @apply bg-amber-100 text-amber-800; }
+    .badge-rejected    { @apply bg-red-100 text-red-800; }
+    .badge-human_review{ @apply bg-purple-100 text-purple-800; }
+    .badge-processing  { @apply bg-blue-100 text-blue-800; }
+    .badge-submitted   { @apply bg-gray-100 text-gray-800; }
+    .badge-error       { @apply bg-rose-100 text-rose-800 border border-rose-300; }
+    .sev-hard     { @apply bg-red-50 text-red-700 border-red-200; }
+    .sev-fixable  { @apply bg-amber-50 text-amber-700 border-amber-200; }
+    .sev-soft     { @apply bg-yellow-50 text-yellow-700 border-yellow-200; }
+    .sev-escalate { @apply bg-purple-50 text-purple-700 border-purple-200; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Navbar -->
+  <nav class="bg-indigo-700 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-xl font-bold tracking-tight">🏢 Vendor Onboarding</a>
+        <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold {% if is_ai_extraction_enabled() %}bg-emerald-500 text-white{% else %}bg-amber-300 text-slate-900 shadow-sm{% endif %}">
+          AI extraction: {% if is_ai_extraction_enabled() %}ON{% else %}OFF (offline mode){% endif %}
+        </span>
+      </div>
+      <div class="flex gap-6 text-sm font-medium items-center">
+        <a href="/" class="hover:text-indigo-200 transition">Dashboard</a>
+        <a href="/submit" class="hover:text-indigo-200 transition">Submit</a>
+        <a href="/eval" class="hover:text-indigo-200 transition">Evaluation</a>
+        <a href="/outbox" class="hover:text-indigo-200 transition">Outbox</a>
+        <a href="/audit" class="hover:text-indigo-200 transition">Audit</a>
+        {% if is_demo_mode() %}
+        <form method="post" action="/api/demo/reset" onsubmit="return confirm('Reset all submissions and restore baseline demo data?');" class="inline">
+          <button type="submit" class="bg-indigo-900/80 hover:bg-indigo-950 text-indigo-100 px-2.5 py-1 rounded text-xs border border-indigo-400/40 transition flex items-center gap-1 shadow-sm" title="Rebuilds initial seeded state">
+            <span>↺</span> Reset Demo
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Core principle banner -->
+  <div class="bg-indigo-50 border-b border-indigo-200 text-xs text-indigo-700 text-center py-1 px-4">
+    ⚙️ <strong>Core principle:</strong> The LLM extracts fields only. All approve / reject / flag decisions are deterministic rule code. The LLM never decides outcomes.
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

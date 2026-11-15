@@ -1,0 +1,22 @@
+{
+  "doc_type": "pan_card",
+  "doc_type_detected": "pan_card",
+  "fields": {
+    "pan_number": "AAHFH8901K",
+    "name_on_pan": "Sahyadri Agro Enterprises",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-13T14:18:29Z",
+    "_pdf_mod_date": "2026-11-13T14:18:29Z",
+    "_claimed_issue_date": "2022-01-01"
+  },
+  "confidences": {
+    "pan_number": 0.99,
+    "name_on_pan": 0.96
+  },
+  "snippets": {
+    "pan_number": "AAHFH8901K",
+    "name_on_pan": "Name: Sahyadri Agro Enterprises"
+  },
+  "raw_text": "INCOME TAX DEPARTMENT\nPermanent Account Number Card\nName: Sahyadri Agro Enterprises\nPAN: AAHFH8901K\nDate of Issue: 2022-01-01",
+  "extractor_type": "text_layer_regex"
+}

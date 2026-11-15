@@ -1,0 +1,24 @@
+{
+  "doc_type": "cancelled_cheque",
+  "doc_type_detected": "cancelled_cheque",
+  "fields": {
+    "account_holder_name": "M/s Acme Industrial Systems",
+    "ifsc_on_cheque": "SBIN0000300",
+    "account_last4_on_cheque": "1234",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:37:39Z",
+    "_pdf_mod_date": "2026-11-15T02:37:39Z"
+  },
+  "confidences": {
+    "account_holder_name": 0.96,
+    "ifsc_on_cheque": 0.99,
+    "account_last4_on_cheque": 0.95
+  },
+  "snippets": {
+    "account_holder_name": "Pay to: M/s Acme Industrial Systems",
+    "ifsc_on_cheque": "SBIN0000300",
+    "account_last4_on_cheque": "Account Number: XXXX XXXX 1234"
+  },
+  "raw_text": "CANCELLED CHEQUE - STATE BANK OF INDIA\nPay to: M/s Acme Industrial Systems\nAccount Number: XXXX XXXX 1234\nIFSC: SBIN0000300",
+  "extractor_type": "text_layer_regex"
+}

@@ -1,0 +1,22 @@
+{
+  "doc_type": "llpin_cert",
+  "doc_type_detected": "llpin_cert",
+  "fields": {
+    "llpin_on_cert": "AAA-1234",
+    "llp_name_on_cert": "Delta Commodities LLP",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-13T14:55:18Z",
+    "_pdf_mod_date": "2026-11-13T14:55:18Z",
+    "_claimed_issue_date": "2019-01-10"
+  },
+  "confidences": {
+    "llpin_on_cert": 0.98,
+    "llp_name_on_cert": 0.95
+  },
+  "snippets": {
+    "llpin_on_cert": "AAA-1234",
+    "llp_name_on_cert": "LLP Name: Delta Commodities LLP"
+  },
+  "raw_text": "LLPIN REGISTRATION CERTIFICATE\nLLP Name: Delta Commodities LLP\nLLPIN: AAA-1234\nDate of Registration: 2019-01-10",
+  "extractor_type": "text_layer_regex"
+}

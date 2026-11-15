@@ -1,0 +1,21 @@
+{
+  "doc_type": "pan_card",
+  "doc_type_detected": "pan_card",
+  "fields": {
+    "pan_number": "AABCS1717S",
+    "name_on_pan": "Irrelevant Essay Cheque Private Limited",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z"
+  },
+  "confidences": {
+    "pan_number": 0.99,
+    "name_on_pan": 0.96
+  },
+  "snippets": {
+    "pan_number": "AABCS1717S",
+    "name_on_pan": "Name on Card: Irrelevant Essay Cheque Private Limited"
+  },
+  "raw_text": "INCOME TAX DEPARTMENT\nPAN: AABCS1717S\nName on Card: Irrelevant Essay Cheque Private Limited",
+  "extractor_type": "text_layer_regex"
+}

@@ -1,0 +1,24 @@
+{
+  "doc_type": "cancelled_cheque",
+  "doc_type_detected": "cancelled_cheque",
+  "fields": {
+    "account_holder_name": "Falcon Electronics (India) Pvt Ltd",
+    "ifsc_on_cheque": "UTIB0000123",
+    "account_last4_on_cheque": "5005",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z"
+  },
+  "confidences": {
+    "account_holder_name": 0.96,
+    "ifsc_on_cheque": 0.99,
+    "account_last4_on_cheque": 0.95
+  },
+  "snippets": {
+    "account_holder_name": "Pay to: Falcon Electronics (India) Pvt Ltd",
+    "ifsc_on_cheque": "UTIB0000123",
+    "account_last4_on_cheque": "Account No: XXXX XXXX 5005"
+  },
+  "raw_text": "HDFC BANK LIMITED - CANCELLED CHEQUE\nNariman Point Branch / Clearance: RTGS/NEFT / Code: 000300\nPay to: Falcon Electronics (India) Pvt Ltd\nAccount No: XXXX XXXX 5005\nIFSC: UTIB0000123\nStamp: VERIFIED & CANCELLED",
+  "extractor_type": "text_layer_regex"
+}

@@ -1,0 +1,18 @@
+{
+  "doc_type": "coi",
+  "doc_type_detected": "unknown_document",
+  "fields": {
+    "cin_on_coi": "U72900MH2018PTC123456",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:18:49Z",
+    "_pdf_mod_date": "2026-11-15T02:18:49Z"
+  },
+  "confidences": {
+    "cin_on_coi": 0.99
+  },
+  "snippets": {
+    "cin_on_coi": "U72900MH2018PTC123456"
+  },
+  "raw_text": "DOCUMENT - COI\nName: Someone Industrial Systems\nCIN: U72900MH2018PTC123456",
+  "extractor_type": "text_layer_regex"
+}

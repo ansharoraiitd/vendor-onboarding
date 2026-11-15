@@ -1,0 +1,454 @@
+records:
+- id: R01
+  notes: Perfect pvt_ltd submission — all checks pass
+  expected_outcome: approved
+  expected_triggered_checks: []
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Acme Technologies Private Limited
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A1ZM
+    cin: U67190MH2010PTC201234
+    ifsc: HDFC0001234
+    address_state_code: '27'
+    udyam_number: null
+- id: R02
+  notes: Partnership firm — no CIN needed
+  expected_outcome: approved
+  expected_triggered_checks: []
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Bharat Traders
+    entity_type: partnership
+    pan: AABFB5678B
+    gstin: 29AABFB5678B1ZQ
+    cin: null
+    ifsc: SBIN0005678
+    address_state_code: '29'
+    udyam_number: null
+- id: R03
+  notes: LLP with valid LLPIN
+  expected_outcome: approved
+  expected_triggered_checks: []
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Kuber Solutions LLP
+    entity_type: llp
+    pan: AAFCK3456D
+    gstin: 24AAFCK3456D1ZH
+    llpin: AAA-1234
+    cin: null
+    ifsc: ICIC0003456
+    address_state_code: '24'
+    udyam_number: null
+- id: R04
+  notes: Sole proprietor — no CIN/LLPIN
+  expected_outcome: approved
+  expected_triggered_checks: []
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Ramesh Kumar Enterprises
+    entity_type: proprietorship
+    pan: AACPE7890E
+    gstin: 19AACPE7890E1ZF
+    cin: null
+    ifsc: PUNB0007890
+    address_state_code: '19'
+    udyam_number: null
+- id: R05
+  notes: Micro MSME manufacturer — approved with payment cap flag
+  expected_outcome: approved
+  expected_triggered_checks:
+  - payment_term_cap
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Sunrise Manufacturing Pvt Ltd
+    entity_type: pvt_ltd
+    pan: AAHCM7788H
+    gstin: 27AAHCM7788H1ZL
+    cin: U27300MH2015PTC305678
+    ifsc: AXIS0001111
+    address_state_code: '27'
+    udyam_number: UDYAM-MH-00-0001234
+    udyam_category: micro
+    udyam_activity_type: manufacturing
+- id: R06
+  notes: PAN format invalid (bad 4th char for pvt_ltd → 'X' not in allowed set)
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - pan_format
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Bad Pan Co
+    entity_type: pvt_ltd
+    pan: AABXA1234A
+    gstin: 27AABXA1234A1ZA
+    cin: U67190MH2010PTC999001
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R07
+  notes: GSTIN checksum off-by-one (last char wrong)
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - gstin_checksum
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Checksum Fail Corp
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A1ZA
+    cin: U67190MH2010PTC999002
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R08
+  notes: GSTIN embedded PAN does not match submitted PAN
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - gstin_embedded_pan_match
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Pan Mismatch Ltd
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AAPCS9012C1ZS
+    cin: U67190MH2010PTC999003
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R09
+  notes: 'PAN entity-type mismatch: pvt_ltd but PAN 4th char = F (partnership)'
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - pan_entity_type_match
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Wrong Type Ltd
+    entity_type: pvt_ltd
+    pan: AABFB5678B
+    gstin: 29AABFB5678B1ZQ
+    cin: U67190KA2010PTC999004
+    ifsc: SBIN0005678
+    address_state_code: '29'
+- id: R10
+  notes: CIN entity type code (NPL) doesn't match pvt_ltd claim
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - cin_entity_type_match
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Fake Pvt NPL Ltd
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A1ZM
+    cin: U67190MH2010NPL999005
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R11
+  notes: CIN year mismatch (CIN says 1990, COI says 2015)
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - cin_year_match
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Year Mismatch Pvt Ltd
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A1ZM
+    cin: U67190MH1990PTC999006
+    cin_year_on_coi: 2015
+    extraction_confidence_cin_year: 0.95
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R12
+  notes: IFSC format invalid (5th char is not 0)
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - ifsc_format
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Bad IFSC Co
+    entity_type: partnership
+    pan: AABFB5678B
+    gstin: 29AABFB5678B1ZQ
+    cin: null
+    ifsc: HDFC1001234
+    address_state_code: '29'
+- id: R13
+  notes: GSTIN 13th char is 0 — invalid format (must be [1-9A-Z])
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - gstin_format
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Zero Reg Co
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A0ZA
+    cin: U67190MH2010PTC999007
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R14
+  notes: LLPIN format invalid (wrong separator)
+  expected_outcome: pending
+  expected_triggered_checks:
+  - llpin_format
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Bad LLPIN Solutions LLP
+    entity_type: llp
+    pan: AAFCK3456D
+    gstin: 24AAFCK3456D1ZH
+    llpin: AAA1234
+    cin: null
+    ifsc: ICIC0003456
+    address_state_code: '24'
+- id: R15
+  notes: PAN status = invalid from adapter
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - pan_status
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Invalid PAN Enterprises
+    entity_type: partnership
+    pan: AABFB5678B
+    pan_status_adapter_response: invalid
+    gstin: 29AABFB5678B1ZQ
+    cin: null
+    ifsc: SBIN0005678
+    address_state_code: '29'
+- id: R16
+  notes: 'Missing required document: COI not uploaded for pvt_ltd'
+  expected_outcome: pending
+  expected_triggered_checks:
+  - required_docs_present
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Missing Doc Pvt Ltd
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A1ZM
+    cin: U67190MH2010PTC999008
+    ifsc: HDFC0001234
+    address_state_code: '27'
+    uploaded_docs:
+    - pan_card
+    - gst_certificate
+    - cancelled_cheque
+- id: R17
+  notes: PAN status = missing from adapter
+  expected_outcome: pending
+  expected_triggered_checks:
+  - pan_status
+  - tds_higher_rate_flag
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Missing PAN Ltd
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    pan_status_adapter_response: missing
+    gstin: 27AABCA1234A1ZM
+    cin: U67190MH2010PTC999009
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R18
+  notes: Udyam number supplied but format invalid
+  expected_outcome: pending
+  expected_triggered_checks:
+  - udyam_format
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Udyam Error Mfg Co
+    entity_type: pvt_ltd
+    pan: AAHCM7788H
+    gstin: 27AAHCM7788H1ZL
+    cin: U27300MH2015PTC999010
+    ifsc: AXIS0001111
+    address_state_code: '27'
+    udyam_number: UDYAM-MH-0012345
+- id: R19
+  notes: GSTIN state code doesn't match GST cert principal-place state (fixable by
+    design)
+  expected_outcome: pending
+  expected_triggered_checks:
+  - gstin_state_code_match
+  is_legit_near_miss: false
+  vendor:
+    legal_name: State Mismatch Ltd
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A1ZM
+    gst_cert_state_code_extracted: '29'
+    extraction_confidence_state: 0.92
+    cin: U67190MH2010PTC999011
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R20
+  notes: Low extraction confidence on GST cert state → hard check downgraded to fixable
+  expected_outcome: pending
+  expected_triggered_checks:
+  - gstin_state_code_match
+  is_legit_near_miss: true
+  vendor:
+    legal_name: Legit But Blurry Cert Ltd
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A1ZM
+    gst_cert_state_code_extracted: '29'
+    extraction_confidence_state: 0.6
+    cin: U67190MH2010PTC999012
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R21
+  notes: 'DV2: same bank account HMAC as existing approved vendor'
+  expected_outcome: human_review
+  expected_triggered_checks:
+  - duplicate_bank_account
+  is_legit_near_miss: true
+  vendor:
+    legal_name: Ravi Kumar Trading
+    entity_type: proprietorship
+    pan: AACPE7890E
+    gstin: 19AACPE7890E1ZF
+    cin: null
+    ifsc: PUNB0007890
+    address_state_code: '19'
+    bank_account_hmac_collision: true
+- id: R22
+  notes: 'Soft score >= 20: PDF editing tool (5) + bank name warn (10) + CIN state
+    soft (5)'
+  expected_outcome: human_review
+  expected_triggered_checks:
+  - pdf_editing_tool
+  - bank_name_fuzzy_match
+  - cin_state_match
+  is_legit_near_miss: true
+  vendor:
+    legal_name: Genuine Corp Pvt Ltd
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A1ZM
+    cin: U67190MH2010PTC999013
+    ifsc: HDFC0001234
+    address_state_code: '27'
+    simulated_soft_score: 20
+- id: R23
+  notes: 'DV3: near-identical name to existing approved vendor (soft +15 → human_review)'
+  expected_outcome: human_review
+  expected_triggered_checks:
+  - duplicate_name_fuzzy
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Acme Technologies Pvt Ltd
+    entity_type: pvt_ltd
+    pan: AAPCS9012C
+    gstin: 07AAPCS9012C1ZW
+    cin: U67190DL2012PTC999014
+    ifsc: ICIC0001234
+    address_state_code: '07'
+- id: R24
+  notes: DV1 — PAN + different GSTIN + non-matching name → human_review
+  expected_outcome: human_review
+  expected_triggered_checks:
+  - duplicate_pan_gstin
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Totally Different Co
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 29AABCA1234A1ZK
+    cin: U67190KA2010PTC999015
+    ifsc: HDFC0001234
+    address_state_code: '29'
+- id: R25
+  notes: DV1 — same GSTIN as R01 → hard → rejected
+  expected_outcome: rejected
+  expected_triggered_checks:
+  - duplicate_pan_gstin
+  is_legit_near_miss: false
+  vendor:
+    legal_name: Duplicate GSTIN Corp
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 27AABCA1234A1ZM
+    cin: U67190MH2010PTC999016
+    ifsc: HDFC0001234
+    address_state_code: '27'
+- id: R26
+  notes: 'Near-miss: ''M/s Bharat Traders'' normalises to ''bharat traders'' — should
+    pass B3'
+  expected_outcome: approved
+  expected_triggered_checks: []
+  is_legit_near_miss: true
+  vendor:
+    legal_name: Bharat Traders
+    entity_type: partnership
+    pan: AABFB5678B
+    gstin: 29AABFB5678B1ZQ
+    cin: null
+    ifsc: SBIN0005678
+    address_state_code: '29'
+    bank_account_holder_name: M/s Bharat Traders
+- id: R27
+  notes: 'Near-miss: trading MSME — no payment cap should apply, still approved'
+  expected_outcome: approved
+  expected_triggered_checks:
+  - payment_term_cap
+  is_legit_near_miss: true
+  vendor:
+    legal_name: Kuber Traders Pvt Ltd
+    entity_type: pvt_ltd
+    pan: AAPCM2211K
+    gstin: 07AAPCM2211K1Z5
+    cin: U52100DL2018PTC999017
+    ifsc: PUNB0007890
+    address_state_code: '07'
+    udyam_number: UDYAM-DL-01-0001234
+    udyam_category: micro
+    udyam_activity_type: trading
+- id: R28
+  notes: 'Near-miss: Section 8 company with valid NPL CIN — should approve'
+  expected_outcome: approved
+  expected_triggered_checks: []
+  is_legit_near_miss: true
+  vendor:
+    legal_name: Education For All Foundation
+    entity_type: section8
+    pan: AADCS1122F
+    gstin: 33AADCS1122F1ZL
+    cin: U85300TN2008NPL999018
+    ifsc: IOBA0001234
+    address_state_code: '33'
+- id: R29
+  notes: 'Near-miss: DV1 same PAN + different GSTIN + matching name → additional GST
+    site (allowed)'
+  expected_outcome: approved
+  expected_triggered_checks:
+  - duplicate_pan_gstin
+  is_legit_near_miss: true
+  vendor:
+    legal_name: Acme Technologies Private Limited
+    entity_type: pvt_ltd
+    pan: AABCA1234A
+    gstin: 29AABCA1234A1ZK
+    cin: U67190KA2010PTC999019
+    ifsc: HDFC0001234
+    address_state_code: '29'
+    additional_site_flag: true
+- id: R30
+  notes: 'Near-miss: medium MSME — no payment cap, all else clean → approved'
+  expected_outcome: approved
+  expected_triggered_checks:
+  - payment_term_cap
+  is_legit_near_miss: true
+  vendor:
+    legal_name: Medium Scale Industries Pvt Ltd
+    entity_type: pvt_ltd
+    pan: AAJCS9900J
+    gstin: 29AAJCS9900J1ZI
+    cin: U27300KA2010PTC999020
+    ifsc: SBIN0005678
+    address_state_code: '29'
+    udyam_number: UDYAM-KA-02-0009999
+    udyam_category: medium
+    udyam_activity_type: services

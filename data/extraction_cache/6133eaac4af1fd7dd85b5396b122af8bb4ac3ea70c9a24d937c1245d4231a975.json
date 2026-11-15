@@ -1,0 +1,24 @@
+{
+  "doc_type": "cancelled_cheque",
+  "doc_type_detected": "cancelled_cheque",
+  "fields": {
+    "account_holder_name": "Kalyan Heavy Machineries Private Limited (Branch Division)",
+    "ifsc_on_cheque": "SBIN0000300",
+    "account_last4_on_cheque": "9009",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z"
+  },
+  "confidences": {
+    "account_holder_name": 0.96,
+    "ifsc_on_cheque": 0.99,
+    "account_last4_on_cheque": 0.95
+  },
+  "snippets": {
+    "account_holder_name": "A/c Holder: Kalyan Heavy Machineries Private Limited (Branch Division)",
+    "ifsc_on_cheque": "SBIN0000300",
+    "account_last4_on_cheque": "A/c Number: XXXX XXXX 9009"
+  },
+  "raw_text": "ICICI BANK - CANCELLED CHEQUE\nIFSC: SBIN0000300\nA/c Number: XXXX XXXX 9009\nA/c Holder: Kalyan Heavy Machineries Private Limited (Branch Division)",
+  "extractor_type": "text_layer_regex"
+}

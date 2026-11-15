@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Outbox — Vendor Onboarding{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-5">
+  <h1 class="text-xl font-bold text-gray-800">Outbox</h1>
+  <span class="text-sm text-gray-400">{{ rows | length }} email(s)</span>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+  <table class="min-w-full text-sm">
+    <thead class="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">
+      <tr>
+        <th class="px-4 py-3 text-left">Submission</th>
+        <th class="px-4 py-3 text-left">Recipient</th>
+        <th class="px-4 py-3 text-left">Template</th>
+        <th class="px-4 py-3 text-left">Status</th>
+        <th class="px-4 py-3 text-left">Queued</th>
+        <th class="px-4 py-3 text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for row in rows %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3">
+          <a href="/submissions/{{ row.submission_id }}/memo" class="text-indigo-600 hover:underline font-mono text-xs">
+            {{ row.submission_id[:8] }}…
+          </a>
+        </td>
+        <td class="px-4 py-3 text-gray-700">{{ row.recipient }}</td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-0.5 rounded-full text-xs font-medium
+            {% if row.template == 'approved' %}bg-green-100 text-green-700
+            {% elif row.template == 'rejected' %}bg-red-100 text-red-700
+            {% elif row.template == 'pending' %}bg-amber-100 text-amber-700
+            {% else %}bg-purple-100 text-purple-700{% endif %}">
+            {{ row.template }}
+          </span>
+        </td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-0.5 rounded-full text-xs font-medium
+            {% if row.status == 'sent' %}bg-green-100 text-green-700
+            {% elif row.status == 'failed' %}bg-red-100 text-red-700
+            {% else %}bg-gray-100 text-gray-600{% endif %}">
+            {{ row.status }}
+          </span>
+        </td>
+        <td class="px-4 py-3 text-xs text-gray-400">{{ (row.queued_at or "")[:16].replace("T"," ") }}</td>
+        <td class="px-4 py-3 flex gap-3">
+          <button onclick="showBody('{{ row.id }}')" class="text-xs text-indigo-600 hover:underline">View</button>
+          <form method="post" action="/outbox/{{ row.id }}/resend" style="display:inline">
+            <button type="submit" class="text-xs text-gray-500 hover:underline">Resend</button>
+          </form>
+        </td>
+      </tr>
+      <!-- Hidden body modal row -->
+      <tr id="body-{{ row.id }}" class="hidden bg-indigo-50">
+        <td colspan="6" class="px-6 py-4">
+          <p class="text-xs font-semibold text-gray-500 mb-1">Subject: {{ row.subject }}</p>
+          <pre class="text-xs text-gray-700 whitespace-pre-wrap">{{ row.body }}</pre>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="px-4 py-8 text-center text-gray-400">No outbox entries yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+function showBody(id) {
+  const el = document.getElementById("body-" + id);
+  if (el) el.classList.toggle("hidden");
+}
+</script>
+{% endblock %}

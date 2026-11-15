@@ -1,0 +1,11 @@
+.env
+key.env
+*.env
+.venv/
+data/*.key
+data/extraction_cache/*.key
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+*.zip

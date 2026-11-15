@@ -1,0 +1,8 @@
+Cancelled Cheque
+CANCELLED
+
+Pay to: Acme Pvt Ltd
+Account Number: XXXX XXXX 1234
+IFSC: SBIN0000300
+Bank: State Bank of India
+Branch: Main Branch

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Decision Memo — {{ submission.legal_name }}{% endblock %}
+{% block content %}
+
+<div class="max-w-4xl mx-auto space-y-5">
+  <!-- Header -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">{{ submission.legal_name }}</h1>
+        <p class="text-xs text-gray-400 mt-0.5">
+          {{ submission.entity_type.replace("_"," ").title() }} ·
+          GSTIN: {{ submission.gstin or "N/A" }} ·
+          Attempt #{{ submission.attempt_no }}
+        </p>
+        <p class="text-xs text-gray-300 font-mono mt-1">{{ submission.id }}</p>
+      </div>
+      {% if decision %}
+      <span class="px-3 py-1.5 rounded-full font-semibold text-sm
+        {% if decision.outcome == 'approved' %}bg-green-100 text-green-700
+        {% elif decision.outcome == 'rejected' %}bg-red-100 text-red-700
+        {% elif decision.outcome == 'pending' %}bg-amber-100 text-amber-700
+        {% elif decision.outcome == 'error' %}bg-rose-100 text-rose-700 border border-rose-300
+        {% else %}bg-purple-100 text-purple-700{% endif %}">
+        {{ decision.outcome.replace("_"," ").title() }}
+      </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- LLM Explanation -->
+  {% if decision and decision.llm_explanation %}
+  <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+    <p class="text-xs font-semibold text-indigo-500 uppercase mb-2">Summary (LLM-generated, non-binding)</p>
+    <p class="text-sm text-indigo-900">{{ decision.llm_explanation }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Risk score -->
+  {% if decision %}
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+    <p class="text-xs font-semibold text-gray-500 uppercase mb-2">Soft Risk Score</p>
+    <div class="flex items-center gap-3">
+      <div class="flex-1 bg-gray-200 rounded-full h-4">
+        <div class="h-4 rounded-full
+          {% if decision.soft_risk_score >= 50 %}bg-red-500
+          {% elif decision.soft_risk_score >= 20 %}bg-amber-400
+          {% else %}bg-green-400{% endif %}"
+          style="width: {{ [decision.soft_risk_score or 0, 100] | min }}%"></div>
+      </div>
+      <span class="text-xl font-bold font-mono text-gray-700">{{ decision.soft_risk_score or 0 | int }}</span>
+      <span class="text-sm text-gray-400">/ 100</span>
+    </div>
+    <p class="text-xs text-gray-400 mt-1">Review threshold: 20 · Hard fails: {{ (decision.hard_fail_checks or '[]') | from_json | length }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Check results table -->
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+      <p class="text-sm font-semibold text-gray-700">Check Results ({{ checks | length }})</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-xs">
+        <thead class="bg-gray-50 text-gray-500 uppercase tracking-wider text-xs">
+          <tr>
+            <th class="px-4 py-2 text-left">Check</th>
+            <th class="px-4 py-2 text-left">Status</th>
+            <th class="px-4 py-2 text-left">Severity</th>
+            <th class="px-4 py-2 text-left">Message</th>
+            <th class="px-4 py-2 text-right">Score</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for c in checks %}
+          <tr class="hover:bg-gray-50 cursor-pointer" onclick="toggleEvidence('ev-{{ loop.index }}')">
+            <td class="px-4 py-2 font-mono text-gray-700">{{ c.check_name }}</td>
+            <td class="px-4 py-2">
+              <span class="px-1.5 py-0.5 rounded font-semibold
+                {% if c.status == 'pass' %}bg-green-100 text-green-700
+                {% elif c.status == 'fail' %}bg-red-100 text-red-700
+                {% elif c.status == 'warn' %}bg-amber-100 text-amber-700
+                {% else %}bg-gray-100 text-gray-500{% endif %}">
+                {{ c.status }}
+              </span>
+            </td>
+            <td class="px-4 py-2">
+              <span class="px-1.5 py-0.5 rounded border text-xs
+                {% if c.severity == 'hard' %}bg-red-50 text-red-600 border-red-200
+                {% elif c.severity == 'fixable' %}bg-amber-50 text-amber-600 border-amber-200
+                {% elif c.severity == 'escalate' %}bg-purple-50 text-purple-600 border-purple-200
+                {% else %}bg-yellow-50 text-yellow-600 border-yellow-200{% endif %}">
+                {{ c.severity }}
+              </span>
+            </td>
+            <td class="px-4 py-2 text-gray-600 max-w-xs">{{ c.explanation or "—" }}</td>
+            <td class="px-4 py-2 text-right font-mono {% if c.score_contribution > 0 %}text-orange-600 font-bold{% else %}text-gray-300{% endif %}">
+              {% if c.score_contribution > 0 %}+{{ c.score_contribution | int }}{% else %}—{% endif %}
+            </td>
+          </tr>
+          {% if c.evidence %}
+          <tr id="ev-{{ loop.index }}" class="hidden">
+            <td colspan="5" class="px-6 py-2 bg-gray-50">
+              <pre class="text-xs text-gray-500 overflow-auto max-h-32">{{ c.evidence }}</pre>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Override panel -->
+  {% if submission.status == 'human_review' %}
+  <div class="bg-purple-50 border border-purple-200 rounded-xl p-5">
+    <p class="text-sm font-semibold text-purple-800 mb-3">🔍 Manual Review Panel</p>
+    <form method="post" action="/submissions/{{ submission.id }}/override" class="space-y-3">
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">Override reason (required)</label>
+        <textarea name="override_reason" required rows="2"
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
+                  placeholder="Explain the basis for this override…"></textarea>
+      </div>
+      <div class="flex gap-3">
+        <button type="submit" name="override_outcome" value="approved"
+                class="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700">Approve</button>
+        <button type="submit" name="override_outcome" value="rejected"
+                class="bg-red-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-red-700">Reject</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="flex gap-3">
+    <a href="/submissions/{{ submission.id }}/run" class="text-sm text-indigo-600 hover:underline">← Live Run</a>
+    <a href="/" class="text-sm text-gray-400 hover:underline">Dashboard</a>
+  </div>
+</div>
+
+<script>
+function toggleEvidence(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle("hidden");
+}
+</script>
+{% endblock %}

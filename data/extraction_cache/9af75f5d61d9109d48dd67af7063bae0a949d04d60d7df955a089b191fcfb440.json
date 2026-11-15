@@ -1,0 +1,13 @@
+{
+  "doc_type": "cancelled_cheque",
+  "doc_type_detected": "unknown_document",
+  "fields": {
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:43:12Z",
+    "_pdf_mod_date": "2026-11-15T02:43:12Z"
+  },
+  "confidences": {},
+  "snippets": {},
+  "raw_text": "A STUDY ON MODERN ARCHITECTURE\nLorem ipsum dolor sit amet, consectetur adipiscing elit.\nSed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+  "extractor_type": "text_layer_regex"
+}

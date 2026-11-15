@@ -1,0 +1,27 @@
+{
+  "doc_type": "gst_certificate",
+  "doc_type_detected": "cancelled_cheque",
+  "fields": {
+    "gstin_on_cert": "27AABCT1818T1ZI",
+    "legal_name_on_cert": "Wrong Name Cheque Private Limited",
+    "trade_name_on_cert": "/ Legal Name: Wrong Name Cheque Private Limited",
+    "principal_place_state_code": "27",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:54:09Z",
+    "_pdf_mod_date": "2026-11-15T02:54:09Z"
+  },
+  "confidences": {
+    "gstin_on_cert": 0.99,
+    "legal_name_on_cert": 0.97,
+    "trade_name_on_cert": 0.95,
+    "principal_place_state_code": 0.98
+  },
+  "snippets": {
+    "gstin_on_cert": "27AABCT1818T1ZI",
+    "legal_name_on_cert": "Legal Name: Wrong Name Cheque Private Limited",
+    "trade_name_on_cert": "Trade Name / Legal Name: Wrong Name Cheque Private Limited",
+    "principal_place_state_code": "State Code: 27"
+  },
+  "raw_text": "CERTIFICATE OF REGISTRATION UNDER GST\nState Code: 27\nGSTIN on Cert: 27AABCT1818T1ZI\nTrade Name / Legal Name: Wrong Name Cheque Private Limited",
+  "extractor_type": "text_layer_regex"
+}

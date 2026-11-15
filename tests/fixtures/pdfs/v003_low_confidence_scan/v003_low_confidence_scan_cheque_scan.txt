@@ -1,0 +1,9 @@
+[IMAGE-ONLY PLACEHOLDER]
+Cancelled Cheque
+CANCELLED
+
+Pay to: Blurry Text Company Pvt Ltd
+Account Number: XXXX XXXX 5678
+IFSC: HDFC0001234
+Bank: State Bank of India
+Branch: Main Branch

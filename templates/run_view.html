@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Live Run — {{ submission.legal_name }}{% endblock %}
+{% block content %}
+
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-4 flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">{{ submission.legal_name }}</h1>
+      <p class="text-xs text-gray-400 font-mono mt-0.5">{{ submission.id }}</p>
+    </div>
+    <span id="status-badge"
+          class="px-3 py-1 rounded-full text-sm font-semibold
+                 {% if submission.status == 'processing' or submission.status == 'submitted' %}bg-blue-100 text-blue-700
+                 {% else %}bg-gray-100 text-gray-600{% endif %}">
+      {{ submission.status.replace("_"," ").title() }}
+    </span>
+  </div>
+
+  <!-- Risk meter -->
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4 flex items-center gap-4">
+    <span class="text-sm text-gray-500 font-medium w-24">Risk score</span>
+    <div class="flex-1 bg-gray-200 rounded-full h-3 relative">
+      <div id="risk-bar" class="h-3 rounded-full bg-green-400 transition-all duration-500" style="width:0%"></div>
+      <div class="absolute left-[20%] top-0 h-full w-px bg-amber-400 opacity-60"></div>
+      <div class="absolute left-[50%] top-0 h-full w-px bg-red-400 opacity-60"></div>
+    </div>
+    <span id="risk-score" class="text-sm font-mono font-bold text-gray-700 w-12 text-right">0</span>
+    <span class="text-xs text-gray-400">/100</span>
+  </div>
+
+  <!-- Final decision banner -->
+  <div id="decision-banner" class="hidden mb-4 rounded-xl p-4 text-center font-semibold text-lg shadow-sm"></div>
+
+  <!-- Events table -->
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+        <tr>
+          <th class="px-4 py-3 text-left">Stage</th>
+          <th class="px-4 py-3 text-left">Check</th>
+          <th class="px-4 py-3 text-left">Status</th>
+          <th class="px-4 py-3 text-left">Severity</th>
+          <th class="px-4 py-3 text-left">Message</th>
+          <th class="px-4 py-3 text-right">Score</th>
+          <th class="px-4 py-3 text-right">ms</th>
+        </tr>
+      </thead>
+      <tbody id="events-table" class="divide-y divide-gray-100">
+        <tr id="loading-row">
+          <td colspan="7" class="px-4 py-6 text-center text-gray-400 text-sm">
+            <span class="animate-pulse">⏳ Waiting for pipeline…</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Action buttons (shown after decision) -->
+  <div id="action-buttons" class="hidden mt-4 flex gap-3">
+    <a href="/submissions/{{ submission.id }}/memo"
+       class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+      View Full Memo →
+    </a>
+    <a href="/" class="text-sm text-gray-500 self-center hover:underline">← Dashboard</a>
+  </div>
+</div>
+
+<script>
+(function() {
+  const subId = "{{ submission.id }}";
+  const tbody = document.getElementById("events-table");
+  const loadingRow = document.getElementById("loading-row");
+  const riskBar = document.getElementById("risk-bar");
+  const riskScore = document.getElementById("risk-score");
+  const statusBadge = document.getElementById("status-badge");
+  const decisionBanner = document.getElementById("decision-banner");
+  const actionButtons = document.getElementById("action-buttons");
+  let totalScore = 0;
+  let rowCount = 0;
+
+  const statusColors = {
+    pass: "bg-green-100 text-green-700",
+    fail: "bg-red-100 text-red-700",
+    warn: "bg-amber-100 text-amber-700",
+    missing: "bg-gray-100 text-gray-500",
+    error: "bg-rose-50 border border-rose-300 text-rose-800",
+  };
+  const sevColors = {
+    hard: "bg-red-50 text-red-700 border border-red-200",
+    fixable: "bg-amber-50 text-amber-700 border border-amber-200",
+    soft: "bg-yellow-50 text-yellow-700 border border-yellow-200",
+    escalate: "bg-purple-50 text-purple-700 border border-purple-200",
+    error: "bg-rose-50 border border-rose-300 text-rose-800",
+  };
+  const decisionColors = {
+    approved: "bg-green-50 border border-green-300 text-green-800",
+    pending: "bg-amber-50 border border-amber-300 text-amber-800",
+    rejected: "bg-red-50 border border-red-300 text-red-800",
+    human_review: "bg-purple-50 border border-purple-300 text-purple-800",
+    error: "bg-rose-50 border border-rose-300 text-rose-800",
+  };
+
+  const es = new EventSource(`/submissions/${subId}/run-stream`);
+  es.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data.check_name === "stream_end") { es.close(); return; }
+
+    if (rowCount === 0 && loadingRow) loadingRow.remove();
+    rowCount++;
+
+    // Update risk score
+    if (data.score_contribution > 0) {
+      totalScore = Math.min(totalScore + data.score_contribution, 100);
+      riskScore.textContent = Math.round(totalScore);
+      riskBar.style.width = totalScore + "%";
+      riskBar.className = riskBar.className.replace(/bg-\w+-\d+/, "");
+      if (totalScore >= 50) riskBar.classList.add("bg-red-500");
+      else if (totalScore >= 20) riskBar.classList.add("bg-amber-400");
+      else riskBar.classList.add("bg-green-400");
+    }
+
+    // Pipeline error handling
+    if (data.check_name === "pipeline_error") {
+      decisionBanner.textContent = "❌ PIPELINE ERROR: " + data.message;
+      decisionBanner.className = "mb-4 rounded-xl p-4 text-center font-semibold text-lg shadow-sm bg-rose-50 border border-rose-300 text-rose-800";
+      decisionBanner.classList.remove("hidden");
+      actionButtons.classList.remove("hidden");
+      statusBadge.textContent = "Error";
+      statusBadge.className = "px-3 py-1 rounded-full text-sm font-semibold bg-rose-100 text-rose-700";
+    }
+    if (data.check_name === "final_decision") {
+      const outcome = data.status;
+      const labels = {
+        approved: "✅ APPROVED",
+        pending: "⚠️ PENDING — Action required",
+        rejected: "❌ REJECTED",
+        human_review: "🔍 HUMAN REVIEW",
+      };
+      decisionBanner.textContent = labels[outcome] || outcome.toUpperCase();
+      decisionBanner.className = `mb-4 rounded-xl p-4 text-center font-semibold text-lg shadow-sm ${decisionColors[outcome] || "bg-gray-100"}`;
+      decisionBanner.classList.remove("hidden");
+      actionButtons.classList.remove("hidden");
+      statusBadge.textContent = outcome.replace("_"," ").replace(/\b\w/g,c=>c.toUpperCase());
+
+      if (outcome === "pending") {
+        const resubmitBtn = document.createElement("a");
+        resubmitBtn.href = `/submissions/${subId}/resubmit`;
+        resubmitBtn.className = "bg-amber-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition";
+        resubmitBtn.textContent = "Resubmit Correction →";
+        actionButtons.prepend(resubmitBtn);
+      }
+    }
+
+    // Add row
+    const tr = document.createElement("tr");
+    tr.className = "hover:bg-gray-50";
+    const stageIcon = {extraction:"🔍", validation:"⚙️", decision:"🎯", notification:"📧", pipeline:"🚀"}[data.stage] || "·";
+    const sc = data.score_contribution > 0 ? `+${data.score_contribution}` : "—";
+    tr.innerHTML = `
+      <td class="px-4 py-2 text-xs text-gray-400">${stageIcon} ${data.stage}</td>
+      <td class="px-4 py-2 font-mono text-xs text-gray-700">${data.check_name}</td>
+      <td class="px-4 py-2"><span class="px-1.5 py-0.5 rounded text-xs font-semibold ${statusColors[data.status] || 'bg-gray-100 text-gray-500'}">${data.status}</span></td>
+      <td class="px-4 py-2"><span class="px-1.5 py-0.5 rounded text-xs ${sevColors[data.severity] || ''}">${data.severity}</span></td>
+      <td class="px-4 py-2 text-xs text-gray-600 max-w-xs truncate" title="${data.message}">${data.message}</td>
+      <td class="px-4 py-2 text-xs text-right font-mono ${data.score_contribution > 0 ? 'text-orange-600 font-bold' : 'text-gray-300'}">${sc}</td>
+      <td class="px-4 py-2 text-xs text-right text-gray-300">${data.elapsed_ms}</td>
+    `;
+    tbody.appendChild(tr);
+    tr.scrollIntoView({behavior:"smooth", block:"nearest"});
+  };
+
+  es.onerror = function() {
+    es.close();
+    if (rowCount === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-4 text-center text-red-400 text-sm">Connection error. <a href="" class="underline">Refresh</a></td></tr>';
+    }
+  };
+})();
+</script>
+{% endblock %}

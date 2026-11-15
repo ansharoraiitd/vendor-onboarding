@@ -1,0 +1,24 @@
+{
+  "doc_type": "gst_certificate",
+  "doc_type_detected": "gst_certificate",
+  "fields": {
+    "gstin_on_cert": "27AABCB2002B1Z3",
+    "legal_name_on_cert": "Bharat Precision Forgings Private Limited",
+    "address_on_cert": "State: 27",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-15T02:50:25Z",
+    "_pdf_mod_date": "2026-11-15T02:50:25Z"
+  },
+  "confidences": {
+    "gstin_on_cert": 0.99,
+    "legal_name_on_cert": 0.97,
+    "address_on_cert": 0.92
+  },
+  "snippets": {
+    "gstin_on_cert": "27AABCB2002B1Z3",
+    "legal_name_on_cert": "Legal Name: Bharat Precision Forgings Private Limited",
+    "address_on_cert": "Principal Place of Business State: 27"
+  },
+  "raw_text": "GOODS AND SERVICES TAX REGISTRATION\nTax Invoice Reference Verification / Tax Office: Ward 4B\nLegal Name: Bharat Precision Forgings Private Limited\nGSTIN: 27AABCB2002B1Z3\nPrincipal Place of Business State: 27",
+  "extractor_type": "text_layer_regex"
+}

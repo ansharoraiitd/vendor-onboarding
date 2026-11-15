@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% block title %}Resubmit Corrections — {{ submission.legal_name }}{% endblock %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+  <!-- Page Title -->
+  <div class="mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Vendor Resubmission</h1>
+        <p class="text-sm text-gray-500 mt-0.5">Correct details or re-upload required documents to complete onboarding.</p>
+      </div>
+      <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300">
+        Attempt #{{ submission.attempt_no or 1 }} — Pending Corrections
+      </span>
+    </div>
+  </div>
+
+  <!-- Status banner: Shows current pending reason (human-readable fixable items, no technical check names) -->
+  <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl shadow-sm mb-6">
+    <div class="flex items-start">
+      <div class="flex-shrink-0 text-amber-500 text-xl font-bold mr-3">⚠️</div>
+      <div class="flex-1">
+        <h2 class="text-sm font-bold text-amber-900 mb-1">Action Required Before Approval</h2>
+        <p class="text-xs text-amber-800 mb-2">
+          Your submission is currently pending review. Please address the following items and resubmit:
+        </p>
+        <ul class="list-disc list-inside space-y-1 text-xs text-amber-900 font-medium">
+          {% for label in fixable_labels %}
+          <li>{{ label }}</li>
+          {% else %}
+          <li>Please verify the uploaded documents and ensure all details match accurately.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resubmission Form -->
+  <form method="post" action="/submissions/{{ submission.id }}/resubmit" enctype="multipart/form-data"
+        class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
+
+    <!-- Document Re-Upload Panel (ONLY failing document slots) -->
+    <section>
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">Document Re-Upload Panel</h2>
+        <span class="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded font-medium">
+          {{ failing_slots|length }} Document{{ "s" if failing_slots|length != 1 else "" }} Need Correction
+        </span>
+      </div>
+      <p class="text-xs text-gray-500 mb-4">
+        Only the documents that failed verification or could not be read are displayed below. Upload new, clear copies to replace previous uploads.
+      </p>
+
+      {% if failing_slots %}
+      <div class="space-y-4">
+        {% for slot in failing_slots %}
+        <div class="border-2 border-dashed border-amber-300 rounded-xl p-4 bg-amber-50/40">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <label class="block text-xs font-bold text-gray-800">
+                📄 {{ slot.label }} <span class="text-red-500">*</span>
+              </label>
+              {% if slot.reason %}
+              <p class="text-xs text-amber-700 mt-0.5">{{ slot.reason }}</p>
+              {% endif %}
+            </div>
+            <span class="text-[11px] font-mono px-2 py-0.5 bg-white border border-gray-200 rounded text-gray-500">
+              Slot: {{ slot.key }}
+            </span>
+          </div>
+          <input type="file" name="{{ slot.field_name }}" accept="{{ slot.accept or '.pdf,.jpg,.jpeg,.png' }}"
+                 class="block w-full text-xs text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 cursor-pointer">
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-600">
+        No document re-uploads are currently flagged. You may verify and edit the text fields below.
+      </div>
+      {% endif %}
+    </section>
+
+    <!-- Pre-filled Business & Tax Form Fields -->
+    <section>
+      <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Business Identity & Registration</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Legal Name <span class="text-red-500">*</span></label>
+          <input type="text" name="legal_name" value="{{ submission.legal_name or '' }}" required
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Trade Name</label>
+          <input type="text" name="trade_name" value="{{ submission.trade_name or '' }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Entity Type <span class="text-red-500">*</span></label>
+          <select name="entity_type" required
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            <option value="proprietorship" {% if submission.entity_type == 'proprietorship' %}selected{% endif %}>Proprietorship</option>
+            <option value="partnership" {% if submission.entity_type == 'partnership' %}selected{% endif %}>Partnership Firm</option>
+            <option value="llp" {% if submission.entity_type == 'llp' %}selected{% endif %}>LLP</option>
+            <option value="pvt_ltd" {% if submission.entity_type == 'pvt_ltd' %}selected{% endif %}>Private Limited</option>
+            <option value="pub_ltd" {% if submission.entity_type == 'pub_ltd' %}selected{% endif %}>Public Limited</option>
+            <option value="section8" {% if submission.entity_type == 'section8' %}selected{% endif %}>Section 8 Company</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Contact Email</label>
+          <input type="email" name="email" value="{{ submission.email or '' }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">PAN</label>
+          <input type="text" name="pan" value="{{ submission.pan or '' }}" maxlength="10"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm uppercase font-mono focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">GSTIN</label>
+          <input type="text" name="gstin" value="{{ submission.gstin or '' }}" maxlength="15"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm uppercase font-mono focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">CIN / LLPIN</label>
+          <input type="text" name="cin" value="{{ submission.cin or submission.llpin or '' }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm uppercase font-mono focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Agreed Payment Days</label>
+          <input type="number" name="agreed_payment_days" value="{{ submission.agreed_payment_days if submission.agreed_payment_days is not none else '' }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+      </div>
+    </section>
+
+    <!-- Banking & Udyam Details -->
+    <section>
+      <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Bank & Udyam Details</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Bank IFSC Code</label>
+          <input type="text" name="ifsc" value="{{ submission.ifsc or '' }}" maxlength="11"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm uppercase font-mono focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Bank Account Number (Leave blank to keep existing)</label>
+          <input type="text" name="bank_account_number" placeholder="Enter only if updating account"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Udyam Registration Number</label>
+          <input type="text" name="udyam_number" value="{{ submission.udyam_number or '' }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Udyam Activity Type</label>
+          <select name="udyam_activity_type"
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            <option value="">Not applicable</option>
+            <option value="manufacturing" {% if submission.udyam_activity_type == 'manufacturing' %}selected{% endif %}>Manufacturing</option>
+            <option value="services" {% if submission.udyam_activity_type == 'services' %}selected{% endif %}>Services</option>
+            <option value="trading" {% if submission.udyam_activity_type == 'trading' %}selected{% endif %}>Trading</option>
+          </select>
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-xs text-gray-500 mb-1">Address Line</label>
+          <input type="text" name="address_line" value="{{ submission.address_line or '' }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Address State Code (2-digit)</label>
+          <input type="text" name="address_state_code" value="{{ submission.address_state_code or '' }}" maxlength="2"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+      </div>
+    </section>
+
+    <!-- Submit Correction Action Button -->
+    <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+      <a href="/submissions/{{ submission.id }}/run" class="text-xs text-gray-500 hover:underline">
+        ← Cancel and Return to Live Run
+      </a>
+      <button type="submit"
+              class="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold shadow-sm transition">
+        Resubmit Correction →
+      </button>
+    </div>
+  </form>
+
+  <!-- Attempt History Timeline (§12.8) -->
+  <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Attempt History</h2>
+    
+    {% if attempt_history %}
+    <div class="relative border-l-2 border-gray-200 ml-3 space-y-6">
+      {% for att in attempt_history %}
+      <div class="relative pl-6">
+        <span class="absolute -left-2 top-1.5 w-4 h-4 rounded-full border-2 border-white
+                    {% if att.outcome == 'approved' %}bg-green-500
+                    {% elif att.outcome == 'rejected' %}bg-red-500
+                    {% elif att.outcome == 'human_review' %}bg-purple-500
+                    {% else %}bg-amber-500{% endif %}">
+        </span>
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold text-gray-800">
+            Attempt #{{ att.attempt_number }} — 
+            <span class="uppercase tracking-wide
+                        {% if att.outcome == 'approved' %}text-green-700
+                        {% elif att.outcome == 'rejected' %}text-red-700
+                        {% elif att.outcome == 'human_review' %}text-purple-700
+                        {% else %}text-amber-700{% endif %}">
+              {{ att.outcome }}
+            </span>
+          </p>
+          <span class="text-[11px] text-gray-400 font-mono">{{ att.decided_at }}</span>
+        </div>
+
+        {% if att.fixable_items %}
+        <div class="mt-2 bg-gray-50 rounded-lg p-3 text-xs border border-gray-100">
+          <p class="font-medium text-gray-600 mb-1">Items flagged for correction:</p>
+          <ul class="list-disc list-inside space-y-0.5 text-gray-500">
+            {% for item in att.fixable_items %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-xs text-gray-400 italic">No prior attempts recorded.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

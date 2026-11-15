@@ -1,0 +1,24 @@
+{
+  "doc_type": "udyam_cert",
+  "doc_type_detected": "udyam_cert",
+  "fields": {
+    "udyam_number": "UDYAM-MH-00-0012345",
+    "udyam_category": "micro",
+    "udyam_activity_type": "manufacturing",
+    "_pdf_producer": "ReportLab PDF Library - www.reportlab.com",
+    "_pdf_creation_date": "2026-11-13T14:55:18Z",
+    "_pdf_mod_date": "2026-11-13T14:55:18Z"
+  },
+  "confidences": {
+    "udyam_number": 0.99,
+    "udyam_category": 0.96,
+    "udyam_activity_type": 0.95
+  },
+  "snippets": {
+    "udyam_number": "UDYAM-MH-00-0012345",
+    "udyam_category": "Micro",
+    "udyam_activity_type": "Manufacturing"
+  },
+  "raw_text": "UDYAM REGISTRATION CERTIFICATE\nEnterprise: Acme Industrial Systems Private Limited\nUdyam Number: UDYAM-MH-00-0012345\nCategory: Micro\nActivity: Manufacturing",
+  "extractor_type": "text_layer_regex"
+}

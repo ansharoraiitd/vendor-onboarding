@@ -1,0 +1,394 @@
+# tests/fixtures/eval_set_e2e.yaml
+# Frozen 24-Record End-to-End Pipeline Evaluation Dataset (SPEC §11)
+# Written BEFORE running tests. Labels are compliance ground truth and NOT edited.
+# Contains:
+# - At least 3 different layouts per document type (Beneficiary, Pay to, A/c Holder, reversed order, noise lines, uppercase)
+# - At least 6 image-only scans marked needs_vision: true
+
+- id: "E2E01"
+  name: "Apex Engineering Systems Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCA1001A"
+  gstin: "27AABCA1001A1ZZ"
+  cin: "U72200MH2019PTC101001"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321001"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_beneficiary_uppercase"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Clean approval with Layout 1 (Beneficiary Name in UPPERCASE)."
+
+- id: "E2E02"
+  name: "Bharat Precision Forgings Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCB2002B"
+  gstin: "27AABCB2002B1ZT"
+  cin: "U28100MH2018PTC202002"
+  ifsc: "HDFC0001234"
+  bank_account_number: "987654322002"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_pay_to_noise"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Clean approval with Layout 2 ('Pay to' format with extra bank branch noise lines)."
+
+- id: "E2E03"
+  name: "Crest Chemicals & Polymers Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCC3003C"
+  gstin: "27AABCC3003C1ZN"
+  cin: "U24100MH2017PTC303003"
+  ifsc: "ICIC0000002"
+  bank_account_number: "987654323003"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_ac_holder_reversed"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Clean approval with Layout 3 ('A/c Holder' format with reversed field order: IFSC first)."
+
+- id: "E2E04"
+  name: "Delta Agro Exports LLP"
+  entity_type: "llp"
+  pan: "AAFFD4004D"
+  gstin: "24AAFFD4004D1Z9"
+  llpin: "AAA-4004"
+  ifsc: "SBIN0000456"
+  bank_account_number: "987654324004"
+  address_state_code: "24"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_beneficiary_uppercase"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Legitimate LLP vendor with valid LLPIN."
+
+- id: "E2E05"
+  name: "Falcon Electronics Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCE5005E"
+  gstin: "27AABCE5005E1ZB"
+  cin: "U32100MH2020PTC505005"
+  ifsc: "UTIB0000123"
+  bank_account_number: "987654325005"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_pay_to_noise"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Near-miss legal name on cheque: 'Falcon Electronics (India) Pvt Ltd' with noise stripping."
+
+- id: "E2E06"
+  name: "Greenfield Packaging Solutions Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCF6006F"
+  gstin: "27AABCF6006F1Z5"
+  cin: "U21010MH2016PTC606006"
+  ifsc: "KKBK0000987"
+  bank_account_number: "987654326006"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_ac_holder_reversed"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Cheque says 'M/s Greenfield Packaging Solutions Pvt Ltd Current A/C'. Should approve."
+
+- id: "E2E07"
+  name: "Horizon Logistics Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCG7007G"
+  gstin: "27AABCG7007G1ZZ"
+  cin: "U60200MH2021PTC707007"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654327007"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_pay_to_noise"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Cheque says 'Horizon Logistics Pvt Ltd Unit 2'. Noise stripping handles unit. Approved."
+
+- id: "E2E08"
+  name: "Zenith Software Technologies Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCH8008H"
+  gstin: "27AABCH8008H1ZT"
+  cin: "U72900MH2015PTC808008"
+  ifsc: "HDFC0001234"
+  bank_account_number: "987654328008"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_beneficiary_uppercase"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Clean IT services vendor with Beneficiary uppercase layout."
+
+- id: "E2E09"
+  name: "Kalyan Heavy Machineries Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCI9009I"
+  gstin: "27AABCI9009I1ZM"
+  cin: "U29100MH2019PTC909009"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654329009"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_ac_holder_reversed"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Cheque has 'Kalyan Heavy Machineries Private Limited (Branch Division)'. Noise stripped."
+
+# --- Adversarial Lookalike Entities (Must NOT Approve) ---
+- id: "E2E10"
+  name: "Acme Industrial Systems"
+  entity_type: "pvt_ltd"
+  pan: "AABCJ1010J"
+  gstin: "27AABCJ1010J1Z8"
+  cin: "U72200MH2018PTC101010"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321010"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: false
+  layout_style: "layout_pay_to_noise"
+  expected_outcome: "not approved"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Cheque has lookalike entity 'Acme Industrial Systems Trading'. Must NOT approve (pending or human_review acceptable)."
+
+- id: "E2E11"
+  name: "Acme Industrial Systems"
+  entity_type: "pvt_ltd"
+  pan: "AABCK1111K"
+  gstin: "27AABCK1111K1Z1"
+  cin: "U72200MH2018PTC111111"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321111"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: false
+  layout_style: "layout_beneficiary_uppercase"
+  expected_outcome: "pending"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Cheque has lookalike entity 'Someone Industrial Systems'. Must NOT approve."
+
+- id: "E2E12"
+  name: "Acme Industrial Systems"
+  entity_type: "pvt_ltd"
+  pan: "AABCL1212L"
+  gstin: "27AABCL1212L1ZU"
+  cin: "U72200MH2018PTC121212"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321212"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: false
+  layout_style: "layout_ac_holder_reversed"
+  expected_outcome: "not approved"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Cheque has lookalike entity 'Acme Industrial Systems Holdings'. Must NOT approve (pending or human_review acceptable)."
+
+# --- Defect Records (Deterministic Rule Engine Failures) ---
+- id: "E2E13"
+  name: "Defective Checksum Trading Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCM1313M"
+  gstin: "27AABCM1313M1Z9"  # Deliberate wrong checksum character (9 instead of valid check digit)
+  cin: "U72200MH2018PTC131313"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321313"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: false
+  layout_style: "layout_beneficiary_uppercase"
+  expected_outcome: "rejected"
+  expected_failing_checks: ["gstin_checksum"]
+  notes: "GSTIN fails mod-36 checksum mathematical verification. Rejected."
+
+- id: "E2E14"
+  name: "Mismatched PAN Entity Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABPP1414P"          # 4th char is P (Proprietorship), but entity is pvt_ltd (requires C)
+  gstin: "27AABPP1414P1ZX"
+  cin: "U72200MH2018PTC141414"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321414"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: false
+  layout_style: "layout_pay_to_noise"
+  expected_outcome: "rejected"
+  expected_failing_checks: ["pan_entity_type_match"]
+  notes: "PAN 4th character P conflicts with Pvt Ltd entity type (Hard Fail). Rejected."
+
+- id: "E2E15"
+  name: "State Mismatch Enterprises Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCQ1515Q"
+  gstin: "29AABCQ1515Q1Z1"
+  cin: "U72200MH2018PTC151515"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321515"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: false
+  layout_style: "layout_ac_holder_reversed"
+  expected_outcome: "approved"
+  expected_failing_checks: []
+  notes: "Legitimate multi-state vendor with GST certificate in state 29 and registered address in state 27. Soft risk signal (+10), approved."
+
+- id: "E2E16"
+  name: "Slot Swapped Documents Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCR1616R"
+  gstin: "27AABCR1616R1ZW"
+  cin: "U72200MH2018PTC161616"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321616"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: false
+  layout_style: "layout_slot_swapped"
+  expected_outcome: "pending"
+  expected_failing_checks: ["pan_card_number_match"]
+  notes: "GST certificate uploaded into PAN card slot. Content classification detects mismatch (Fixable per SPEC). Pending."
+
+- id: "E2E17"
+  name: "Irrelevant Essay Cheque Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCS1717S"
+  gstin: "27AABCS1717S1ZP"
+  cin: "U72200MH2018PTC171717"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321717"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: false
+  layout_style: "layout_irrelevant_essay"
+  expected_outcome: "pending"
+  expected_failing_checks: ["document_type_match_cancelled_cheque"]
+  notes: "Essay PDF uploaded into cheque slot. Fails document type verification."
+
+- id: "E2E18"
+  name: "Wrong Name Cheque Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCT1818T"
+  gstin: "27AABCT1818T1ZI"
+  cin: "U72200MH2018PTC181818"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321818"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: false
+  layout_style: "layout_wrong_name_cheque"
+  expected_outcome: "pending"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Cheque made out to completely different individual 'Rajesh Sharma'. Pending."
+
+# --- Scanned Image-Only Records (needs_vision: true) ---
+# In offline mode, image scans with no digital text layer fail closed safely.
+- id: "E2E19"
+  name: "Alpha Raster Scan Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCU1919U"
+  gstin: "27AABCU1919U1ZB"
+  cin: "U72200MH2018PTC191919"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654321919"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: true
+  layout_style: "image_only_scan"
+  expected_outcome: "pending"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Scanned bitmap cheque. In offline mode fails closed as scan_unreadable_fail_closed."
+
+- id: "E2E20"
+  name: "Beta Raster Scan Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCV2020V"
+  gstin: "27AABCV2020V1Z6"
+  cin: "U72200MH2018PTC202020"
+  ifsc: "HDFC0001234"
+  bank_account_number: "987654322020"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: true
+  layout_style: "image_only_scan"
+  expected_outcome: "pending"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Scanned bitmap cheque with no embedded fonts. Requires vision model."
+
+- id: "E2E21"
+  name: "Gamma Raster Scan Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCW2121W"
+  gstin: "27AABCW2121W1ZZ"
+  cin: "U72200MH2018PTC212121"
+  ifsc: "ICIC0000002"
+  bank_account_number: "987654322121"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: true
+  layout_style: "image_only_scan"
+  expected_outcome: "pending"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Scanned image-only cheque document. Requires vision model."
+
+- id: "E2E22"
+  name: "Delta Raster Scan Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCX2222X"
+  gstin: "27AABCX2222X1ZS"
+  cin: "U72200MH2018PTC222222"
+  ifsc: "UTIB0000123"
+  bank_account_number: "987654322222"
+  address_state_code: "27"
+  is_legitimate: true
+  needs_vision: true
+  layout_style: "image_only_scan"
+  expected_outcome: "pending"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Scanned image cheque. Requires vision model."
+
+- id: "E2E23"
+  name: "Epsilon Adversarial Raster Scan Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCY2323Y"
+  gstin: "27AABCY2323Y1ZL"
+  cin: "U72200MH2018PTC232323"
+  ifsc: "SBIN0000300"
+  bank_account_number: "987654322323"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: true
+  layout_style: "image_only_scan"
+  expected_outcome: "pending"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Adversarial image cheque with third-party name. Fails closed."
+
+- id: "E2E24"
+  name: "Zeta Adversarial Raster Scan Private Limited"
+  entity_type: "pvt_ltd"
+  pan: "AABCZ2424Z"
+  gstin: "27AABCZ2424Z1ZE"
+  cin: "U72200MH2018PTC242424"
+  ifsc: "HDFC0001234"
+  bank_account_number: "987654322424"
+  address_state_code: "27"
+  is_legitimate: false
+  needs_vision: true
+  layout_style: "image_only_scan"
+  expected_outcome: "pending"
+  expected_failing_checks: ["bank_name_fuzzy_match"]
+  notes: "Adversarial image cheque. Requires vision model; fails closed safely."

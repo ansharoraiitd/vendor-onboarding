@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}Submit Vendor — Vendor Onboarding{% endblock %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+  <div class="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex items-center gap-2">
+    <span>⏱️</span>
+    <span><strong>Free hosting note:</strong> The service runs on Render's free tier with ephemeral storage. Cold starts after idle can take approximately 50–60 seconds to spin up.</span>
+  </div>
+
+  <h1 class="text-2xl font-bold text-gray-800 mb-1">New Vendor Submission</h1>
+  <p class="text-sm text-gray-500 mb-4">Fill in vendor details or choose a demo scenario below.</p>
+
+  <!-- Demo scenario buttons -->
+  <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-6">
+    <p class="text-sm font-semibold text-indigo-700 mb-3">⚡ One-click demo scenarios</p>
+    <div class="flex flex-wrap gap-2">
+      {% for key, s in scenarios.items() %}
+      <button type="button" onclick="fillScenario('{{ key }}')"
+              class="px-3 py-1.5 rounded-lg border border-indigo-300 bg-white text-xs font-medium text-indigo-700 hover:bg-indigo-100 transition">
+        {{ key.replace("_"," ").title() }}
+      </button>
+      {% endfor %}
+      <button type="button" onclick="clearForm()"
+              class="px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-xs font-medium text-gray-500 hover:bg-gray-100 transition">
+        ✏️ Type your own
+      </button>
+    </div>
+  </div>
+
+  <!-- Submission form -->
+  <form method="post" action="/submissions" enctype="multipart/form-data"
+        class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
+    <input type="hidden" name="scenario_key" id="scenario_key" value="">
+    <div id="scenario-attachment-notice" class="hidden bg-green-50 border border-green-200 text-green-800 text-xs rounded-lg p-3">
+      📄 <strong>Scenario selected:</strong> Matching synthetic documents (PAN, GST, Cheque, COI/Udyam) will be automatically attached from server on submission.
+    </div>
+
+    <section>
+      <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Business Identity</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% macro field(name, label, placeholder="", required=false, type="text") %}
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">{{ label }}{% if required %} <span class="text-red-500">*</span>{% endif %}</label>
+          <input type="{{ type }}" name="{{ name }}" id="{{ name }}" placeholder="{{ placeholder }}"
+                 {% if required %}required{% endif %}
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+        {% endmacro %}
+
+        {{ field("legal_name", "Legal Name", "e.g. Acme Pvt Ltd", required=true) }}
+        {{ field("trade_name", "Trade Name", "Optional") }}
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Entity Type <span class="text-red-500">*</span></label>
+          <select name="entity_type" id="entity_type" required
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            <option value="">Select…</option>
+            <option value="proprietorship">Proprietorship</option>
+            <option value="partnership">Partnership Firm</option>
+            <option value="llp">LLP</option>
+            <option value="pvt_ltd">Private Limited</option>
+            <option value="pub_ltd">Public Limited</option>
+            <option value="section8">Section 8 Company</option>
+          </select>
+        </div>
+
+        {{ field("email", "Contact Email", "vendor@example.com", type="email") }}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Tax & Registration</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ field("pan", "PAN", "AAAAA9999A") }}
+        {{ field("gstin", "GSTIN", "27AAAAA9999A1Z5") }}
+        {{ field("cin", "CIN (companies only)", "U12345XX0000XXX000000") }}
+        {{ field("llpin", "LLPIN (LLPs only)", "AAA-1234") }}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Banking</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ field("ifsc", "IFSC Code", "SBIN0000300") }}
+        {{ field("bank_account_number", "Bank Account Number", "Will be stored as HMAC only") }}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">MSME / Udyam</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ field("udyam_number", "Udyam Number", "UDYAM-MH-00-0012345") }}
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Udyam Category</label>
+          <select name="udyam_category" id="udyam_category"
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            <option value="">Not applicable</option>
+            <option value="micro">Micro</option>
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 mb-1">Udyam Activity Type</label>
+          <select name="udyam_activity_type" id="udyam_activity_type"
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            <option value="">Not applicable</option>
+            <option value="manufacturing">Manufacturing</option>
+            <option value="services">Services</option>
+            <option value="trading">Trading</option>
+          </select>
+        </div>
+
+        {{ field("agreed_payment_days", "Agreed Payment Days", "e.g. 30 (blank = 15-day MSMED default)", type="number") }}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Address</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="md:col-span-2">
+          <label class="block text-xs text-gray-500 mb-1">Address Line</label>
+          <input name="address_line" id="address_line" placeholder="Street, City, State"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        </div>
+        {{ field("address_state_code", "State Code (GST 2-digit)", "e.g. 27 for Maharashtra") }}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Required Document Uploads</h2>
+      <p class="text-xs text-gray-500 mb-4">Dedicated document slots verified by classification. Upload each file in its corresponding slot.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Always Required -->
+        <div class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-700 mb-1">
+            PAN Card <span class="text-red-500">*</span>
+          </label>
+          <input type="file" name="file_pan_card" accept=".pdf,.jpg,.jpeg,.png"
+                 class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+        </div>
+
+        <div class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-700 mb-1">
+            GST Registration Certificate <span class="text-red-500">*</span>
+          </label>
+          <input type="file" name="file_gst_certificate" accept=".pdf,.jpg,.jpeg,.png"
+                 class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+        </div>
+
+        <div class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-700 mb-1">
+            Cancelled Cheque / Bank Letter <span class="text-red-500">*</span>
+          </label>
+          <input type="file" name="file_cancelled_cheque" accept=".pdf,.jpg,.jpeg,.png"
+                 class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+        </div>
+
+        <!-- Entity Specific Slots -->
+        <div id="slot-coi" class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-700 mb-1">
+            Certificate of Incorporation (COI) <span class="text-red-500">* (Pvt / Pub Ltd)</span>
+          </label>
+          <input type="file" name="file_coi" accept=".pdf,.jpg,.jpeg,.png"
+                 class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+        </div>
+
+        <div id="slot-llpin" class="border border-gray-200 rounded-lg p-3 bg-gray-50 hidden">
+          <label class="block text-xs font-semibold text-gray-700 mb-1">
+            LLP Registration Certificate <span class="text-red-500">* (LLP)</span>
+          </label>
+          <input type="file" name="file_llpin_cert" accept=".pdf,.jpg,.jpeg,.png"
+                 class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+        </div>
+
+        <div id="slot-address" class="border border-gray-200 rounded-lg p-3 bg-gray-50 hidden">
+          <label class="block text-xs font-semibold text-gray-700 mb-1">
+            Address Proof (Electricity Bill) <span class="text-red-500">* (Proprietor/Firm)</span>
+          </label>
+          <input type="file" name="file_address_proof" accept=".pdf,.jpg,.jpeg,.png"
+                 class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+        </div>
+
+        <!-- Optional MSME -->
+        <div class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+          <label class="block text-xs font-semibold text-gray-700 mb-1">
+            Udyam Certificate <span class="text-gray-400 font-normal">(Optional / MSME)</span>
+          </label>
+          <input type="file" name="file_udyam_cert" accept=".pdf,.jpg,.jpeg,.png"
+                 class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+        </div>
+      </div>
+    </section>
+
+    <div class="flex gap-3 pt-2">
+      <button type="submit"
+              class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition text-sm">
+        Submit & Run Pipeline →
+      </button>
+      <a href="/" class="text-sm text-gray-500 self-center hover:underline">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+const scenarios = {{ scenarios | tojson }};
+
+function updateDocumentSlots(entityType) {
+  const slotCoi = document.getElementById("slot-coi");
+  const slotLlpin = document.getElementById("slot-llpin");
+  const slotAddress = document.getElementById("slot-address");
+
+  if (slotCoi) slotCoi.classList.toggle("hidden", !(entityType === "pvt_ltd" || entityType === "pub_ltd" || entityType === "section8"));
+  if (slotLlpin) slotLlpin.classList.toggle("hidden", !(entityType === "llp"));
+  if (slotAddress) slotAddress.classList.toggle("hidden", !(entityType === "proprietorship" || entityType === "partnership"));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const etSelect = document.getElementById("entity_type");
+  if (etSelect) {
+    etSelect.addEventListener("change", (e) => updateDocumentSlots(e.target.value));
+    updateDocumentSlots(etSelect.value);
+  }
+});
+
+function fillScenario(key) {
+  const s = scenarios[key];
+  if (!s) return;
+  document.getElementById("scenario_key").value = key;
+  const notice = document.getElementById("scenario-attachment-notice");
+  if (notice) notice.classList.remove("hidden");
+  const fields = ["legal_name","trade_name","entity_type","pan","gstin","cin","llpin",
+                  "ifsc","bank_account_number","udyam_number","udyam_category",
+                  "udyam_activity_type","address_line","address_state_code","email",
+                  "agreed_payment_days"];
+  fields.forEach(f => {
+    const el = document.getElementById(f);
+    if (el && s[f] !== undefined) {
+      el.value = s[f];
+    } else if (el) {
+      el.value = "";
+    }
+  });
+  if (s["entity_type"]) {
+    updateDocumentSlots(s["entity_type"]);
+  }
+}
+
+function clearForm() {
+  document.getElementById("scenario_key").value = "";
+  const notice = document.getElementById("scenario-attachment-notice");
+  if (notice) notice.classList.add("hidden");
+  document.querySelectorAll("input:not([type=button]):not([type=submit]), select, textarea").forEach(el => el.value = "");
+}
+</script>
+{% endblock %}

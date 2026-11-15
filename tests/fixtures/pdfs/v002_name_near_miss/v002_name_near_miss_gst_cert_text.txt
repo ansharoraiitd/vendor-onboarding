@@ -1,0 +1,13 @@
+GST Certificate
+GOODS AND SERVICES TAX REGISTRATION CERTIFICATE
+
+Legal Name of Business: Acme Pvt Ltd
+Trade Name: Acme Pvt Ltd
+GSTIN: 27AABCU9603R1ZP
+
+Principal Place of Business:
+  123 Industrial Estate, Andheri East, Mumbai 400069
+  State Code: 27
+
+Date of Liability: 2022-04-01
+Type of Registration: Regular
