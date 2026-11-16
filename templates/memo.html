@@ -2,106 +2,192 @@
 {% block title %}Decision Memo — {{ submission.legal_name }}{% endblock %}
 {% block content %}
 
-<div class="max-w-4xl mx-auto space-y-5">
-  <!-- Header -->
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-    <div class="flex items-start justify-between">
+<div class="max-w-4xl mx-auto space-y-6">
+  <!-- Header Dossier Card -->
+  <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-card">
+    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
       <div>
-        <h1 class="text-xl font-bold text-gray-900">{{ submission.legal_name }}</h1>
-        <p class="text-xs text-gray-400 mt-0.5">
-          {{ submission.entity_type.replace("_"," ").title() }} ·
-          GSTIN: {{ submission.gstin or "N/A" }} ·
-          Attempt #{{ submission.attempt_no }}
-        </p>
-        <p class="text-xs text-gray-300 font-mono mt-1">{{ submission.id }}</p>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/60 font-mono">
+            Compliance Memo
+          </span>
+          <span class="text-xs text-slate-400 font-mono font-medium">Attempt #{{ submission.attempt_no }}</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">{{ submission.legal_name }}</h1>
+        <div class="flex flex-wrap items-center gap-2.5 text-xs text-slate-600 mt-2 font-medium">
+          <span class="text-slate-800">{{ submission.entity_type.replace("_"," ").title() }}</span>
+          <span class="text-slate-300">&middot;</span>
+          <span>GSTIN: <strong class="text-slate-800 font-mono">{{ submission.gstin or "N/A" }}</strong></span>
+          <span class="text-slate-300">&middot;</span>
+          <span>PAN: <strong class="text-slate-800 font-mono">{{ submission.pan or "N/A" }}</strong></span>
+        </div>
+        <p class="text-[11px] font-mono text-slate-400 mt-2">UUID: {{ submission.id }}</p>
       </div>
+
       {% if decision %}
-      <span class="px-3 py-1.5 rounded-full font-semibold text-sm
-        {% if decision.outcome == 'approved' %}bg-green-100 text-green-700
-        {% elif decision.outcome == 'rejected' %}bg-red-100 text-red-700
-        {% elif decision.outcome == 'pending' %}bg-amber-100 text-amber-700
-        {% elif decision.outcome == 'error' %}bg-rose-100 text-rose-700 border border-rose-300
-        {% else %}bg-purple-100 text-purple-700{% endif %}">
-        {{ decision.outcome.replace("_"," ").title() }}
-      </span>
+      <div class="flex flex-col items-start sm:items-end gap-1 shrink-0">
+        <span class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border shadow-xs
+          {% if decision.outcome == 'approved' %}badge-approved
+          {% elif decision.outcome == 'rejected' %}badge-rejected
+          {% elif decision.outcome == 'pending' %}badge-pending
+          {% elif decision.outcome == 'error' %}badge-error
+          {% else %}badge-human_review{% endif %}">
+          {{ decision.outcome.replace("_", " ").title() }}
+        </span>
+        <span class="text-[10px] text-slate-400 font-mono font-medium">Final Verification Verdict</span>
+      </div>
       {% endif %}
     </div>
   </div>
 
-  <!-- LLM Explanation -->
+  <!-- LLM Explanation Synthesis -->
   {% if decision and decision.llm_explanation %}
-  <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
-    <p class="text-xs font-semibold text-indigo-500 uppercase mb-2">Summary (LLM-generated, non-binding)</p>
-    <p class="text-sm text-indigo-900">{{ decision.llm_explanation }}</p>
+  <div class="bg-gradient-to-r from-indigo-50/90 via-indigo-50/70 to-blue-50/60 border border-indigo-100 rounded-2xl p-5 shadow-card">
+    <div class="flex items-center gap-2 mb-2">
+      <div class="w-5 h-5 rounded-md bg-indigo-100 flex items-center justify-center text-indigo-700">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <p class="text-xs font-bold uppercase tracking-wider text-indigo-900">Executive Summary (LLM-generated, non-binding)</p>
+    </div>
+    <p class="text-sm text-indigo-950 leading-relaxed pl-7">{{ decision.llm_explanation }}</p>
   </div>
   {% endif %}
 
-  <!-- Risk score -->
+  <!-- Soft Risk score Meter -->
   {% if decision %}
-  <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-    <p class="text-xs font-semibold text-gray-500 uppercase mb-2">Soft Risk Score</p>
-    <div class="flex items-center gap-3">
-      <div class="flex-1 bg-gray-200 rounded-full h-4">
-        <div class="h-4 rounded-full
-          {% if decision.soft_risk_score >= 50 %}bg-red-500
-          {% elif decision.soft_risk_score >= 20 %}bg-amber-400
-          {% else %}bg-green-400{% endif %}"
-          style="width: {{ [decision.soft_risk_score or 0, 100] | min }}%"></div>
+  <div class="bg-white rounded-2xl border border-slate-200/80 shadow-card p-5">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Soft Risk Analysis</span>
+        <span class="text-[10px] font-mono text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">Weighted Score</span>
       </div>
-      <span class="text-xl font-bold font-mono text-gray-700">{{ decision.soft_risk_score or 0 | int }}</span>
-      <span class="text-sm text-gray-400">/ 100</span>
+      <div class="flex items-baseline gap-1 font-mono">
+        <span class="text-2xl font-extrabold {% if decision.soft_risk_score >= 50 %}text-rose-600{% elif decision.soft_risk_score >= 20 %}text-amber-600{% else %}text-emerald-600{% endif %}">
+          {{ decision.soft_risk_score or 0 | int }}
+        </span>
+        <span class="text-xs text-slate-400">/ 100</span>
+      </div>
     </div>
-    <p class="text-xs text-gray-400 mt-1">Review threshold: 20 · Hard fails: {{ (decision.hard_fail_checks or '[]') | from_json | length }}</p>
+    
+    <div class="relative w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200/60">
+      <div class="h-full rounded-full transition-all duration-500 shadow-xs
+        {% if decision.soft_risk_score >= 50 %}bg-gradient-to-r from-orange-500 to-rose-500
+        {% elif decision.soft_risk_score >= 20 %}bg-gradient-to-r from-yellow-400 to-amber-500
+        {% else %}bg-gradient-to-r from-emerald-500 to-teal-400
+        {% endif %}"
+        style="width: {{ [decision.soft_risk_score or 0, 100] | min }}%"></div>
+      <div class="absolute left-[20%] top-0 h-full w-px bg-amber-400"></div>
+      <div class="absolute left-[50%] top-0 h-full w-px bg-rose-500"></div>
+    </div>
+
+    <div class="flex justify-between items-center text-xs text-slate-500 mt-2.5">
+      <span>Review Gate: 20 pts</span>
+      <span class="font-medium text-slate-700">Hard Fails: <strong>{{ (decision.hard_fail_checks or '[]') | from_json | length }}</strong></span>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Document Extraction & Model Attribution -->
+  {% if documents %}
+  <div class="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
+    <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-700">Document Ingestion &amp; Model Attribution</p>
+      </div>
+      <span class="text-xs font-mono text-slate-500">{{ documents | length }} files verified</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-xs divide-y divide-slate-100">
+        <thead class="bg-slate-50/50 text-slate-500 uppercase text-[11px] font-bold tracking-wider">
+          <tr>
+            <th class="px-5 py-3 text-left">Document Slot</th>
+            <th class="px-5 py-3 text-left">Detected Classification</th>
+            <th class="px-5 py-3 text-left">Extractor</th>
+            <th class="px-5 py-3 text-left">Model</th>
+            <th class="px-5 py-3 text-right">Confidence</th>
+            <th class="px-5 py-3 text-right">Cache</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 bg-white">
+          {% for doc in documents %}
+          <tr class="hover:bg-slate-50/70 transition-colors">
+            <td class="px-5 py-3 font-semibold text-slate-900">{{ doc.doc_type.replace("_", " ").title() }}</td>
+            <td class="px-5 py-3 text-slate-600 font-mono">{{ doc.doc_type_detected or "—" }}</td>
+            <td class="px-5 py-3 font-mono">
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold border
+                {% if 'gemini' in doc.extractor_type %}bg-sky-50 text-sky-700 border-sky-200
+                {% elif 'regex' in doc.extractor_type %}bg-indigo-50 text-indigo-700 border-indigo-200
+                {% else %}bg-slate-100 text-slate-700 border-slate-200{% endif %}">
+                {{ doc.extractor_type }}
+              </span>
+            </td>
+            <td class="px-5 py-3 text-slate-600 font-mono font-medium">{{ doc.model }}</td>
+            <td class="px-5 py-3 text-right font-mono font-bold {% if doc.confidence and doc.confidence >= 0.8 %}text-emerald-600{% else %}text-amber-600{% endif %}">
+              {{ "%.1f%%" | format((doc.confidence or 0.95) * 100) }}
+            </td>
+            <td class="px-5 py-3 text-right font-mono text-slate-500 text-[11px]">
+              {% if doc.cached %}<span class="text-emerald-700 font-semibold">cached</span>{% else %}<span class="text-slate-400">live</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
   {% endif %}
 
   <!-- Check results table -->
-  <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-    <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-      <p class="text-sm font-semibold text-gray-700">Check Results ({{ checks | length }})</p>
+  <div class="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
+    <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
+      <p class="text-xs font-bold uppercase tracking-wider text-slate-700">Check Results ({{ checks | length }})</p>
+      <span class="text-[11px] text-slate-400 font-medium">Click any row to reveal cryptographic snippet</span>
     </div>
     <div class="overflow-x-auto">
-      <table class="min-w-full text-xs">
-        <thead class="bg-gray-50 text-gray-500 uppercase tracking-wider text-xs">
+      <table class="min-w-full text-xs divide-y divide-slate-100">
+        <thead class="bg-slate-50/50 text-slate-500 uppercase text-[11px] font-bold tracking-wider">
           <tr>
-            <th class="px-4 py-2 text-left">Check</th>
-            <th class="px-4 py-2 text-left">Status</th>
-            <th class="px-4 py-2 text-left">Severity</th>
-            <th class="px-4 py-2 text-left">Message</th>
-            <th class="px-4 py-2 text-right">Score</th>
+            <th class="px-5 py-3 text-left">Check Key</th>
+            <th class="px-5 py-3 text-left">Status</th>
+            <th class="px-5 py-3 text-left">Severity</th>
+            <th class="px-5 py-3 text-left">Explanation</th>
+            <th class="px-5 py-3 text-right">Score</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-slate-100 bg-white font-sans">
           {% for c in checks %}
-          <tr class="hover:bg-gray-50 cursor-pointer" onclick="toggleEvidence('ev-{{ loop.index }}')">
-            <td class="px-4 py-2 font-mono text-gray-700">{{ c.check_name }}</td>
-            <td class="px-4 py-2">
-              <span class="px-1.5 py-0.5 rounded font-semibold
-                {% if c.status == 'pass' %}bg-green-100 text-green-700
-                {% elif c.status == 'fail' %}bg-red-100 text-red-700
-                {% elif c.status == 'warn' %}bg-amber-100 text-amber-700
-                {% else %}bg-gray-100 text-gray-500{% endif %}">
+          <tr class="hover:bg-slate-50 cursor-pointer transition-colors" onclick="toggleEvidence('ev-{{ loop.index }}')">
+            <td class="px-5 py-3 font-mono font-semibold text-slate-900">{{ c.check_name }}</td>
+            <td class="px-5 py-3">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border
+                {% if c.status == 'pass' %}badge-approved
+                {% elif c.status == 'fail' %}badge-rejected
+                {% elif c.status == 'warn' %}badge-pending
+                {% else %}badge-submitted{% endif %}">
                 {{ c.status }}
               </span>
             </td>
-            <td class="px-4 py-2">
-              <span class="px-1.5 py-0.5 rounded border text-xs
-                {% if c.severity == 'hard' %}bg-red-50 text-red-600 border-red-200
-                {% elif c.severity == 'fixable' %}bg-amber-50 text-amber-600 border-amber-200
-                {% elif c.severity == 'escalate' %}bg-purple-50 text-purple-600 border-purple-200
-                {% else %}bg-yellow-50 text-yellow-600 border-yellow-200{% endif %}">
+            <td class="px-5 py-3">
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold border
+                {% if c.severity == 'hard' %}sev-hard
+                {% elif c.severity == 'fixable' %}sev-fixable
+                {% elif c.severity == 'escalate' %}sev-escalate
+                {% else %}sev-soft{% endif %}">
                 {{ c.severity }}
               </span>
             </td>
-            <td class="px-4 py-2 text-gray-600 max-w-xs">{{ c.explanation or "—" }}</td>
-            <td class="px-4 py-2 text-right font-mono {% if c.score_contribution > 0 %}text-orange-600 font-bold{% else %}text-gray-300{% endif %}">
+            <td class="px-5 py-3 text-slate-700 max-w-sm">{{ c.explanation or "—" }}</td>
+            <td class="px-5 py-3 text-right font-mono {% if c.score_contribution > 0 %}text-amber-600 font-bold{% else %}text-slate-300{% endif %}">
               {% if c.score_contribution > 0 %}+{{ c.score_contribution | int }}{% else %}—{% endif %}
             </td>
           </tr>
           {% if c.evidence %}
           <tr id="ev-{{ loop.index }}" class="hidden">
-            <td colspan="5" class="px-6 py-2 bg-gray-50">
-              <pre class="text-xs text-gray-500 overflow-auto max-h-32">{{ c.evidence }}</pre>
+            <td colspan="5" class="px-6 py-3 bg-slate-50 border-y border-slate-200">
+              <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Evidence Snippet:</div>
+              <pre class="text-xs text-slate-700 overflow-auto max-h-36 whitespace-pre-wrap font-mono bg-white p-3 rounded-lg border border-slate-200">{{ c.evidence }}</pre>
             </td>
           </tr>
           {% endif %}
@@ -111,30 +197,51 @@
     </div>
   </div>
 
-  <!-- Override panel -->
+  <!-- Manual Review Override Panel (Zero Emojis) -->
   {% if submission.status == 'human_review' %}
-  <div class="bg-purple-50 border border-purple-200 rounded-xl p-5">
-    <p class="text-sm font-semibold text-purple-800 mb-3">🔍 Manual Review Panel</p>
-    <form method="post" action="/submissions/{{ submission.id }}/override" class="space-y-3">
+  <div class="bg-gradient-to-r from-purple-50 via-purple-50/70 to-indigo-50 border border-purple-200 rounded-2xl p-6 shadow-card">
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-6 h-6 rounded-md bg-purple-100 flex items-center justify-center text-purple-700">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+      </div>
+      <p class="text-sm font-bold text-purple-900 uppercase tracking-wide">Manual Review Panel</p>
+    </div>
+    <form method="post" action="/submissions/{{ submission.id }}/override" class="space-y-4">
       <div>
-        <label class="block text-xs text-gray-500 mb-1">Override reason (required)</label>
+        <label class="block text-xs font-semibold text-purple-900 mb-1.5">Override Basis &amp; Justification (Required)</label>
         <textarea name="override_reason" required rows="2"
-                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
-                  placeholder="Explain the basis for this override…"></textarea>
+                  class="w-full bg-white border border-purple-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-400/20 focus:border-purple-500 transition-all shadow-xs"
+                  placeholder="Record formal compliance justification for audit trail..."></textarea>
       </div>
       <div class="flex gap-3">
         <button type="submit" name="override_outcome" value="approved"
-                class="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700">Approve</button>
+                class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-xs transition-colors">
+          Approve Vendor
+        </button>
         <button type="submit" name="override_outcome" value="rejected"
-                class="bg-red-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-red-700">Reject</button>
+                class="bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-xs transition-colors">
+          Reject Vendor
+        </button>
       </div>
     </form>
   </div>
   {% endif %}
 
-  <div class="flex gap-3">
-    <a href="/submissions/{{ submission.id }}/run" class="text-sm text-indigo-600 hover:underline">← Live Run</a>
-    <a href="/" class="text-sm text-gray-400 hover:underline">Dashboard</a>
+  <!-- Navigation -->
+  <div class="flex items-center gap-4 pt-2">
+    <a href="/submissions/{{ submission.id }}/run" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors inline-flex items-center gap-1">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      <span>Live Run Stream</span>
+    </a>
+    <span class="text-slate-300">|</span>
+    <a href="/" class="text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors">
+      Dashboard
+    </a>
   </div>
 </div>
 

@@ -1,58 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Vendor Onboarding{% endblock %}</title>
+
+  <!-- Typography: Plus Jakarta Sans for crisp, modern fintech clarity -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+          },
+          boxShadow: {
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04)',
+            'card-hover': '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03)',
+            'glow-indigo': '0 0 20px -3px rgba(99, 102, 241, 0.25)',
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    .badge-approved    { @apply bg-green-100 text-green-800; }
-    .badge-pending     { @apply bg-amber-100 text-amber-800; }
-    .badge-rejected    { @apply bg-red-100 text-red-800; }
-    .badge-human_review{ @apply bg-purple-100 text-purple-800; }
-    .badge-processing  { @apply bg-blue-100 text-blue-800; }
-    .badge-submitted   { @apply bg-gray-100 text-gray-800; }
+    body {
+      background-color: #F8FAFC;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.04) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(241, 245, 249, 0.6) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+    .badge-approved    { @apply bg-emerald-50 text-emerald-700 border border-emerald-200/80; }
+    .badge-pending     { @apply bg-amber-50 text-amber-700 border border-amber-200/80; }
+    .badge-rejected    { @apply bg-rose-50 text-rose-700 border border-rose-200/80; }
+    .badge-human_review{ @apply bg-purple-50 text-purple-700 border border-purple-200/80; }
+    .badge-processing  { @apply bg-sky-50 text-sky-700 border border-sky-200/80; }
+    .badge-submitted   { @apply bg-slate-100 text-slate-700 border border-slate-200/80; }
     .badge-error       { @apply bg-rose-100 text-rose-800 border border-rose-300; }
-    .sev-hard     { @apply bg-red-50 text-red-700 border-red-200; }
-    .sev-fixable  { @apply bg-amber-50 text-amber-700 border-amber-200; }
-    .sev-soft     { @apply bg-yellow-50 text-yellow-700 border-yellow-200; }
-    .sev-escalate { @apply bg-purple-50 text-purple-700 border-purple-200; }
+    .sev-hard     { @apply bg-rose-50 text-rose-700 border border-rose-200/70; }
+    .sev-fixable  { @apply bg-amber-50 text-amber-700 border border-amber-200/70; }
+    .sev-soft     { @apply bg-yellow-50 text-yellow-700 border border-yellow-200/70; }
+    .sev-escalate { @apply bg-purple-50 text-purple-700 border border-purple-200/70; }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-  <!-- Navbar -->
-  <nav class="bg-indigo-700 text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+<body class="min-h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
+  <!-- Sticky Frosted Navigation Header -->
+  <header class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.02)]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <!-- Brand Logo & Status Indicator -->
       <div class="flex items-center gap-3">
-        <a href="/" class="text-xl font-bold tracking-tight">🏢 Vendor Onboarding</a>
-        <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold {% if is_ai_extraction_enabled() %}bg-emerald-500 text-white{% else %}bg-amber-300 text-slate-900 shadow-sm{% endif %}">
-          AI extraction: {% if is_ai_extraction_enabled() %}ON{% else %}OFF (offline mode){% endif %}
-        </span>
+        <a href="/" class="group flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 via-indigo-700 to-violet-600 flex items-center justify-center text-white shadow-sm shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div>
+            <span class="font-bold text-base tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">Vendor Onboarding</span>
+          </div>
+        </a>
+
+        <div class="hidden sm:flex items-center gap-2 pl-2">
+          <span class="text-[11px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200/80 font-mono">v1.0</span>
+          {% if is_ai_extraction_enabled() %}
+          <div class="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 px-2.5 py-0.5 rounded-full shadow-xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>AI extraction: ON ({{ get_gemini_model() }})</span>
+          </div>
+          {% else %}
+          <div class="inline-flex items-center gap-1.5 text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-0.5 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            <span>AI extraction: OFF</span>
+          </div>
+          {% endif %}
+        </div>
       </div>
-      <div class="flex gap-6 text-sm font-medium items-center">
-        <a href="/" class="hover:text-indigo-200 transition">Dashboard</a>
-        <a href="/submit" class="hover:text-indigo-200 transition">Submit</a>
-        <a href="/eval" class="hover:text-indigo-200 transition">Evaluation</a>
-        <a href="/outbox" class="hover:text-indigo-200 transition">Outbox</a>
-        <a href="/audit" class="hover:text-indigo-200 transition">Audit</a>
+
+      <!-- Navigation Links -->
+      <nav class="flex items-center gap-1 sm:gap-1.5 text-sm font-medium">
+        <a href="/" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">Dashboard</a>
+        <a href="/submit" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">Submit</a>
+        <a href="/eval" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">Evaluation</a>
+        <a href="/outbox" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">Outbox</a>
+        <a href="/audit" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">Audit</a>
+
         {% if is_demo_mode() %}
+        <div class="h-4 w-px bg-slate-200 mx-1"></div>
         <form method="post" action="/api/demo/reset" onsubmit="return confirm('Reset all submissions and restore baseline demo data?');" class="inline">
-          <button type="submit" class="bg-indigo-900/80 hover:bg-indigo-950 text-indigo-100 px-2.5 py-1 rounded text-xs border border-indigo-400/40 transition flex items-center gap-1 shadow-sm" title="Rebuilds initial seeded state">
-            <span>↺</span> Reset Demo
+          <button type="submit" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors flex items-center gap-1.5 shadow-xs" title="Rebuilds initial seeded state">
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Reset Demo</span>
           </button>
         </form>
         {% endif %}
-      </div>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <!-- Core principle banner -->
-  <div class="bg-indigo-50 border-b border-indigo-200 text-xs text-indigo-700 text-center py-1 px-4">
-    ⚙️ <strong>Core principle:</strong> The LLM extracts fields only. All approve / reject / flag decisions are deterministic rule code. The LLM never decides outcomes.
+  <!-- Core Principle Sub-Banner (Zero Emojis) -->
+  <div class="bg-gradient-to-r from-indigo-50/70 via-indigo-50/90 to-blue-50/70 border-b border-indigo-100/80 py-2 px-4 text-center">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 text-xs text-indigo-950 font-medium">
+      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200 uppercase tracking-wider">
+        Policy
+      </span>
+      <span>
+        <strong>Core principle:</strong> The LLM extracts fields only. All approve / reject / flag decisions are deterministic rule code. The LLM never decides outcomes.
+      </span>
+    </div>
   </div>
 
-  <main class="max-w-7xl mx-auto px-4 py-6">
+  <!-- Main Workspace Canvas -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
     {% block content %}{% endblock %}
   </main>
+
+  <!-- Clean Light Footer -->
+  <footer class="mt-auto border-t border-slate-200/80 bg-white/70 backdrop-blur-sm py-5 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Vendor Compliance Engine &middot; Deterministic Evaluation Model</span>
+      </div>
+      <div class="font-mono text-slate-400 text-[11px] flex items-center gap-2">
+        <span>SHA-256 Chained Audit Trail</span>
+        <span class="text-slate-300">&middot;</span>
+        <span>Render Free Tier Host</span>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

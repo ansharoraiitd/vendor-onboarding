@@ -2,109 +2,259 @@
 {% block title %}Dashboard — Vendor Onboarding{% endblock %}
 {% block content %}
 
-<!-- KPI Strip -->
-<div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
-  {% set kpi_items = [
-    ("Total", kpis.total, "bg-white"),
-    ("Approved", kpis.approved, "bg-green-50"),
-    ("Pending", kpis.pending, "bg-amber-50"),
-    ("Rejected", kpis.rejected, "bg-red-50"),
-    ("Under Review", kpis.human_review, "bg-purple-50"),
-    ("Avg Risk", kpis.avg_risk ~ "/100", "bg-blue-50"),
-  ] %}
-  {% for label, val, bg in kpi_items %}
-  <div class="rounded-xl shadow-sm border border-gray-200 {{ bg }} p-4 text-center">
-    <div class="text-2xl font-bold text-gray-800">{{ val }}</div>
-    <div class="text-xs text-gray-500 mt-1">{{ label }}</div>
+<div class="space-y-6">
+  <!-- Page Header & Metrics Summary -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Vendor Compliance Dashboard</h1>
+      <p class="text-xs text-slate-500 mt-1">Live telemetry across ingested onboarding pipelines and deterministic verdicts.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="/submit"
+         class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-sm shadow-indigo-500/25 hover:shadow-md hover:shadow-indigo-500/30 transition-all duration-150">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>New Submission</span>
+      </a>
+    </div>
   </div>
-  {% endfor %}
-</div>
 
-<!-- Filters -->
-<form method="get" class="flex flex-wrap gap-3 mb-4 items-end">
-  <div>
-    <label class="block text-xs text-gray-500 mb-1">Search name</label>
-    <input name="q" value="{{ filters.q }}" placeholder="Legal name…"
-           class="border border-gray-300 rounded px-3 py-1.5 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-  </div>
-  <div>
-    <label class="block text-xs text-gray-500 mb-1">Status</label>
-    <select name="status" class="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
-      <option value="">All</option>
-      {% for s in ["approved","pending","rejected","human_review","processing","submitted","error"] %}
-      <option value="{{ s }}" {% if filters.status == s %}selected{% endif %}>{{ s.replace("_"," ").title() }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <div>
-    <label class="block text-xs text-gray-500 mb-1">Entity type</label>
-    <select name="entity_type" class="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
-      <option value="">All</option>
-      {% for et in ["proprietorship","partnership","llp","pvt_ltd","pub_ltd","section8"] %}
-      <option value="{{ et }}" {% if filters.entity_type == et %}selected{% endif %}>{{ et.replace("_"," ").title() }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <button type="submit" class="bg-indigo-600 text-white px-4 py-1.5 rounded text-sm hover:bg-indigo-700 transition">Filter</button>
-  <a href="/" class="text-sm text-gray-500 hover:underline self-center">Reset</a>
-  <a href="/submit" class="ml-auto bg-green-600 text-white px-4 py-1.5 rounded text-sm hover:bg-green-700 transition">+ New Submission</a>
-</form>
+  <!-- KPI Metric Cards Strip -->
+  <div class="grid grid-cols-2 md:grid-cols-6 gap-3.5">
+    <!-- Total Card -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
+      <div class="flex items-center justify-between text-slate-400 mb-1.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Volume</span>
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+      </div>
+      <div class="text-2xl font-extrabold text-slate-900 tracking-tight font-mono">{{ kpis.total }}</div>
+      <div class="text-[11px] text-slate-400 mt-1">Ingested records</div>
+    </div>
 
-<!-- Table -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-  <table class="min-w-full text-sm">
-    <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
-      <tr>
-        <th class="px-4 py-3 text-left">Legal Name</th>
-        <th class="px-4 py-3 text-left">Entity</th>
-        <th class="px-4 py-3 text-left">GSTIN</th>
-        <th class="px-4 py-3 text-left">Status</th>
-        <th class="px-4 py-3 text-left">Risk</th>
-        <th class="px-4 py-3 text-left">Attempt</th>
-        <th class="px-4 py-3 text-left">Submitted</th>
-        <th class="px-4 py-3 text-left">Actions</th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-100">
-      {% for row in rows %}
-      <tr class="hover:bg-gray-50">
-        <td class="px-4 py-3 font-medium text-gray-900">{{ row.legal_name }}</td>
-        <td class="px-4 py-3 text-gray-500">{{ row.entity_type.replace("_"," ").title() }}</td>
-        <td class="px-4 py-3 text-gray-500 font-mono text-xs">{{ (row.gstin or "")[:15] }}</td>
-        <td class="px-4 py-3">
-          <span class="px-2 py-0.5 rounded-full text-xs font-semibold
-            {% if row.status == 'approved' %}bg-green-100 text-green-700
-            {% elif row.status == 'rejected' %}bg-red-100 text-red-700
-            {% elif row.status == 'pending' %}bg-amber-100 text-amber-700
-            {% elif row.status == 'human_review' %}bg-purple-100 text-purple-700
-            {% elif row.status == 'error' %}bg-rose-100 text-rose-700 border border-rose-300
-            {% else %}bg-gray-100 text-gray-600{% endif %}">
-            {{ row.status.replace("_"," ").title() }}
-          </span>
-        </td>
-        <td class="px-4 py-3">
-          <div class="flex items-center gap-1">
-            <div class="w-16 bg-gray-200 rounded-full h-1.5">
-              <div class="h-1.5 rounded-full
-                {% if (row.soft_risk_score or 0) >= 50 %}bg-red-500
-                {% elif (row.soft_risk_score or 0) >= 20 %}bg-amber-400
-                {% else %}bg-green-400{% endif %}"
-                style="width: {{ [row.soft_risk_score or 0, 100] | min }}%"></div>
-            </div>
-            <span class="text-xs text-gray-500">{{ row.soft_risk_score or 0 | int }}</span>
+    <!-- Approved Card -->
+    <div class="bg-white rounded-2xl border border-emerald-200/80 p-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
+      <div class="flex items-center justify-between text-emerald-600 mb-1.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Approved</span>
+        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="text-2xl font-extrabold text-emerald-700 tracking-tight font-mono">{{ kpis.approved }}</div>
+      <div class="text-[11px] text-emerald-600 font-medium mt-1">Cleared for payment</div>
+    </div>
+
+    <!-- Pending Card -->
+    <div class="bg-white rounded-2xl border border-amber-200/80 p-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
+      <div class="flex items-center justify-between text-amber-600 mb-1.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-800">Pending</span>
+        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="text-2xl font-extrabold text-amber-700 tracking-tight font-mono">{{ kpis.pending }}</div>
+      <div class="text-[11px] text-amber-600 font-medium mt-1">Fixable corrections</div>
+    </div>
+
+    <!-- Rejected Card -->
+    <div class="bg-white rounded-2xl border border-rose-200/80 p-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
+      <div class="flex items-center justify-between text-rose-600 mb-1.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-rose-800">Rejected</span>
+        <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="text-2xl font-extrabold text-rose-700 tracking-tight font-mono">{{ kpis.rejected }}</div>
+      <div class="text-[11px] text-rose-600 font-medium mt-1">Terminal hard fails</div>
+    </div>
+
+    <!-- Under Review Card -->
+    <div class="bg-white rounded-2xl border border-purple-200/80 p-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
+      <div class="flex items-center justify-between text-purple-600 mb-1.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-purple-800">Under Review</span>
+        <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+      </div>
+      <div class="text-2xl font-extrabold text-purple-700 tracking-tight font-mono">{{ kpis.human_review }}</div>
+      <div class="text-[11px] text-purple-600 font-medium mt-1">Escalated to human</div>
+    </div>
+
+    <!-- Avg Risk Score Card -->
+    <div class="bg-white rounded-2xl border border-blue-200/80 p-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
+      <div class="flex items-center justify-between text-blue-600 mb-1.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-blue-800">Avg Risk</span>
+        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </div>
+      <div class="text-2xl font-extrabold text-blue-700 tracking-tight font-mono">{{ kpis.avg_risk }}<span class="text-xs text-blue-400 font-normal">/100</span></div>
+      <div class="text-[11px] text-blue-600 font-medium mt-1">Across all active</div>
+    </div>
+  </div>
+
+  <!-- Interactive Search & Filtering Controls -->
+  <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-card">
+    <form method="get" class="flex flex-wrap gap-3.5 items-end">
+      <!-- Search input -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Search Vendor</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
-        </td>
-        <td class="px-4 py-3 text-xs text-gray-500">{{ row.attempt_no }}</td>
-        <td class="px-4 py-3 text-xs text-gray-400">{{ (row.created_at or "")[:10] }}</td>
-        <td class="px-4 py-3 flex gap-2">
-          <a href="/submissions/{{ row.id }}/run" class="text-indigo-600 hover:underline text-xs">Run</a>
-          <a href="/submissions/{{ row.id }}/memo" class="text-green-600 hover:underline text-xs">Memo</a>
-        </td>
-      </tr>
-      {% else %}
-      <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">No submissions found. <a href="/submit" class="text-indigo-600 hover:underline">Create one →</a></td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+          <input name="q" value="{{ filters.q }}" placeholder="Legal name or keyword..."
+                 class="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
+        </div>
+      </div>
+
+      <!-- Status dropdown -->
+      <div class="w-40">
+        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Status</label>
+        <select name="status" class="w-full bg-slate-50/70 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
+          <option value="">All Statuses</option>
+          {% for s in ["approved","pending","rejected","human_review","processing","submitted","error"] %}
+          <option value="{{ s }}" {% if filters.status == s %}selected{% endif %}>{{ s.replace("_"," ").title() }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Entity type dropdown -->
+      <div class="w-44">
+        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Entity Type</label>
+        <select name="entity_type" class="w-full bg-slate-50/70 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
+          <option value="">All Entity Types</option>
+          {% for et in ["proprietorship","partnership","llp","pvt_ltd","pub_ltd","section8"] %}
+          <option value="{{ et }}" {% if filters.entity_type == et %}selected{% endif %}>{{ et.replace("_"," ").title() }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Submit & Reset Buttons -->
+      <div class="flex items-center gap-2">
+        <button type="submit"
+                class="bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm px-4 py-2 rounded-xl shadow-xs transition-colors">
+          Filter
+        </button>
+        <a href="/" class="text-xs font-medium text-slate-500 hover:text-slate-800 px-2 py-2 transition-colors">
+          Reset
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Submissions Table Card -->
+  <div class="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm divide-y divide-slate-100">
+        <thead class="bg-slate-50/80 text-slate-500 uppercase text-[11px] font-bold tracking-wider">
+          <tr>
+            <th class="px-5 py-3.5 text-left">Legal Entity Name</th>
+            <th class="px-5 py-3.5 text-left">Type</th>
+            <th class="px-5 py-3.5 text-left">GSTIN</th>
+            <th class="px-5 py-3.5 text-left">Status</th>
+            <th class="px-5 py-3.5 text-left">Risk Index</th>
+            <th class="px-5 py-3.5 text-center">Attempt</th>
+            <th class="px-5 py-3.5 text-left">Date</th>
+            <th class="px-5 py-3.5 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 bg-white">
+          {% for row in rows %}
+          <tr class="hover:bg-slate-50/70 transition-colors group">
+            <!-- Legal Name -->
+            <td class="px-5 py-3.5 font-semibold text-slate-900">
+              <a href="/submissions/{{ row.id }}/memo" class="hover:text-indigo-600 transition-colors inline-flex items-center gap-1.5">
+                <span>{{ row.legal_name }}</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </td>
+
+            <!-- Entity -->
+            <td class="px-5 py-3.5 text-xs text-slate-600">
+              {{ row.entity_type.replace("_"," ").title() }}
+            </td>
+
+            <!-- GSTIN -->
+            <td class="px-5 py-3.5 font-mono text-xs text-slate-600">
+              {{ row.gstin or "—" }}
+            </td>
+
+            <!-- Status Pill -->
+            <td class="px-5 py-3.5">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+                {% if row.status == 'approved' %}badge-approved
+                {% elif row.status == 'rejected' %}badge-rejected
+                {% elif row.status == 'pending' %}badge-pending
+                {% elif row.status == 'human_review' %}badge-human_review
+                {% elif row.status == 'error' %}badge-error
+                {% else %}badge-submitted{% endif %}">
+                {{ row.status.replace("_"," ").title() }}
+              </span>
+            </td>
+
+            <!-- Soft Risk Meter -->
+            <td class="px-5 py-3.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-16 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                  <div class="h-1.5 rounded-full transition-all duration-300
+                    {% if (row.soft_risk_score or 0) >= 50 %}bg-rose-500
+                    {% elif (row.soft_risk_score or 0) >= 20 %}bg-amber-400
+                    {% else %}bg-emerald-500{% endif %}"
+                    style="width: {{ [row.soft_risk_score or 0, 100] | min }}%"></div>
+                </div>
+                <span class="text-xs font-mono font-bold text-slate-700 w-5 text-right">{{ row.soft_risk_score or 0 | int }}</span>
+              </div>
+            </td>
+
+            <!-- Attempt -->
+            <td class="px-5 py-3.5 text-xs text-center text-slate-500 font-mono">
+              <span class="bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 font-semibold">#{{ row.attempt_no }}</span>
+            </td>
+
+            <!-- Created Date -->
+            <td class="px-5 py-3.5 text-xs text-slate-500 font-mono">
+              {{ (row.created_at or "")[:10] }}
+            </td>
+
+            <!-- Action Buttons -->
+            <td class="px-5 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-2 text-xs">
+                <a href="/submissions/{{ row.id }}/run"
+                   class="px-2.5 py-1 rounded-lg font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-colors">
+                  Run
+                </a>
+                <a href="/submissions/{{ row.id }}/memo"
+                   class="px-2.5 py-1 rounded-lg font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors">
+                  Memo
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="8" class="px-5 py-12 text-center text-slate-400 text-sm">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span class="font-medium text-slate-600">No submissions found matching criteria</span>
+                <a href="/submit" class="text-xs text-indigo-600 hover:underline font-semibold mt-1">Create a new submission &rarr;</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
+
 {% endblock %}

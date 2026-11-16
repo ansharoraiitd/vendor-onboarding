@@ -2,67 +2,116 @@
 {% block title %}Live Run — {{ submission.legal_name }}{% endblock %}
 {% block content %}
 
-<div class="max-w-4xl mx-auto">
-  <!-- Header -->
-  <div class="mb-4 flex items-center justify-between">
+<div class="max-w-4xl mx-auto space-y-5">
+  <!-- Live Telemetry Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
     <div>
-      <h1 class="text-xl font-bold text-gray-800">{{ submission.legal_name }}</h1>
-      <p class="text-xs text-gray-400 font-mono mt-0.5">{{ submission.id }}</p>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/70">
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
+          Live Run Telemetry
+        </span>
+        <span class="text-xs text-slate-400 font-mono">Live Run</span>
+      </div>
+      <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ submission.legal_name }}</h1>
+      <p class="text-xs text-slate-500 font-mono mt-0.5 flex items-center gap-1.5">
+        <span>Session ID:</span>
+        <span class="text-slate-700 font-semibold">{{ submission.id }}</span>
+      </p>
     </div>
-    <span id="status-badge"
-          class="px-3 py-1 rounded-full text-sm font-semibold
-                 {% if submission.status == 'processing' or submission.status == 'submitted' %}bg-blue-100 text-blue-700
-                 {% else %}bg-gray-100 text-gray-600{% endif %}">
-      {{ submission.status.replace("_"," ").title() }}
-    </span>
-  </div>
 
-  <!-- Risk meter -->
-  <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4 flex items-center gap-4">
-    <span class="text-sm text-gray-500 font-medium w-24">Risk score</span>
-    <div class="flex-1 bg-gray-200 rounded-full h-3 relative">
-      <div id="risk-bar" class="h-3 rounded-full bg-green-400 transition-all duration-500" style="width:0%"></div>
-      <div class="absolute left-[20%] top-0 h-full w-px bg-amber-400 opacity-60"></div>
-      <div class="absolute left-[50%] top-0 h-full w-px bg-red-400 opacity-60"></div>
+    <div>
+      <span id="status-badge"
+            class="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border shadow-xs
+                   {% if submission.status == 'processing' or submission.status == 'submitted' %}bg-sky-50 text-sky-700 border-sky-200/80
+                   {% else %}bg-slate-100 text-slate-700 border-slate-200/80{% endif %}">
+        {{ submission.status.replace("_"," ").title() }}
+      </span>
     </div>
-    <span id="risk-score" class="text-sm font-mono font-bold text-gray-700 w-12 text-right">0</span>
-    <span class="text-xs text-gray-400">/100</span>
   </div>
 
-  <!-- Final decision banner -->
-  <div id="decision-banner" class="hidden mb-4 rounded-xl p-4 text-center font-semibold text-lg shadow-sm"></div>
+  <!-- Calibrated Risk Index Meter -->
+  <div class="bg-white rounded-2xl border border-slate-200/80 shadow-card p-5">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Composite Risk Score</span>
+        <span class="text-[10px] font-mono text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">Scale 0 - 100</span>
+      </div>
+      <div class="flex items-baseline gap-1 font-mono">
+        <span id="risk-score" class="text-2xl font-extrabold text-slate-900">0</span>
+        <span class="text-xs text-slate-400 font-semibold">/ 100 pts</span>
+      </div>
+    </div>
 
-  <!-- Events table -->
-  <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-    <table class="min-w-full text-sm">
-      <thead class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
-        <tr>
-          <th class="px-4 py-3 text-left">Stage</th>
-          <th class="px-4 py-3 text-left">Check</th>
-          <th class="px-4 py-3 text-left">Status</th>
-          <th class="px-4 py-3 text-left">Severity</th>
-          <th class="px-4 py-3 text-left">Message</th>
-          <th class="px-4 py-3 text-right">Score</th>
-          <th class="px-4 py-3 text-right">ms</th>
-        </tr>
-      </thead>
-      <tbody id="events-table" class="divide-y divide-gray-100">
-        <tr id="loading-row">
-          <td colspan="7" class="px-4 py-6 text-center text-gray-400 text-sm">
-            <span class="animate-pulse">⏳ Waiting for pipeline…</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Progress Track with Threshold Markers -->
+    <div class="relative w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200/60">
+      <div id="risk-bar" class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500 shadow-xs" style="width:0%"></div>
+      <div class="absolute left-[20%] top-0 h-full w-px bg-amber-400" title="Review Threshold (20)"></div>
+      <div class="absolute left-[50%] top-0 h-full w-px bg-rose-500" title="Rejection Threshold (50)"></div>
+    </div>
+
+    <div class="flex justify-between items-center text-[11px] font-medium text-slate-500 mt-2 px-1">
+      <span class="text-emerald-700">0 - 19 Auto-Approve</span>
+      <span class="text-amber-700">20 Review Gate</span>
+      <span class="text-rose-700">50 Reject Threshold</span>
+    </div>
   </div>
 
-  <!-- Action buttons (shown after decision) -->
-  <div id="action-buttons" class="hidden mt-4 flex gap-3">
+  <!-- Final Decision Banner (Populated by SSE Stream) -->
+  <div id="decision-banner" class="hidden rounded-2xl p-5 text-center font-bold text-sm tracking-wide shadow-card border transition-all"></div>
+
+  <!-- Events Stream Table Card -->
+  <div class="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
+    <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Live Execution Event Stream</span>
+      </div>
+      <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full">Stream Connected</span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-xs divide-y divide-slate-100">
+        <thead class="bg-slate-50/50 text-slate-500 uppercase font-bold text-[11px] tracking-wider border-b border-slate-100">
+          <tr>
+            <th class="px-4 py-3 text-left">Stage</th>
+            <th class="px-4 py-3 text-left">Check Key</th>
+            <th class="px-4 py-3 text-left">Result</th>
+            <th class="px-4 py-3 text-left">Severity</th>
+            <th class="px-4 py-3 text-left">Diagnostic Trace</th>
+            <th class="px-4 py-3 text-right">Delta</th>
+            <th class="px-4 py-3 text-right">Latency</th>
+          </tr>
+        </thead>
+        <tbody id="events-table" class="divide-y divide-slate-100 font-sans">
+          <tr id="loading-row">
+            <td colspan="7" class="px-4 py-8 text-center text-slate-400 text-sm font-sans">
+              <div class="inline-flex items-center gap-2.5">
+                <svg class="animate-spin h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Initializing pipeline engine &middot; waiting for telemetry events...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Action Controls -->
+  <div id="action-buttons" class="hidden flex items-center gap-3 pt-2">
     <a href="/submissions/{{ submission.id }}/memo"
-       class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
-      View Full Memo →
+       class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-500/25 transition-all">
+      <span>View Full Memo</span>
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+      </svg>
     </a>
-    <a href="/" class="text-sm text-gray-500 self-center hover:underline">← Dashboard</a>
+    <a href="/" class="text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors px-3 py-2">
+      Return to Dashboard
+    </a>
   </div>
 </div>
 
@@ -80,25 +129,25 @@
   let rowCount = 0;
 
   const statusColors = {
-    pass: "bg-green-100 text-green-700",
-    fail: "bg-red-100 text-red-700",
-    warn: "bg-amber-100 text-amber-700",
-    missing: "bg-gray-100 text-gray-500",
-    error: "bg-rose-50 border border-rose-300 text-rose-800",
+    pass: "bg-emerald-50 text-emerald-700 border border-emerald-200/80",
+    fail: "bg-rose-50 text-rose-700 border border-rose-200/80",
+    warn: "bg-amber-50 text-amber-700 border border-amber-200/80",
+    missing: "bg-slate-100 text-slate-600 border border-slate-200/80",
+    error: "bg-rose-100 text-rose-800 border border-rose-300",
   };
   const sevColors = {
-    hard: "bg-red-50 text-red-700 border border-red-200",
-    fixable: "bg-amber-50 text-amber-700 border border-amber-200",
-    soft: "bg-yellow-50 text-yellow-700 border border-yellow-200",
-    escalate: "bg-purple-50 text-purple-700 border border-purple-200",
-    error: "bg-rose-50 border border-rose-300 text-rose-800",
+    hard: "bg-rose-50 text-rose-700 border border-rose-200/70",
+    fixable: "bg-amber-50 text-amber-700 border border-amber-200/70",
+    soft: "bg-yellow-50 text-yellow-700 border border-yellow-200/70",
+    escalate: "bg-purple-50 text-purple-700 border border-purple-200/70",
+    error: "bg-rose-50 text-rose-700 border border-rose-200/70",
   };
   const decisionColors = {
-    approved: "bg-green-50 border border-green-300 text-green-800",
-    pending: "bg-amber-50 border border-amber-300 text-amber-800",
-    rejected: "bg-red-50 border border-red-300 text-red-800",
-    human_review: "bg-purple-50 border border-purple-300 text-purple-800",
-    error: "bg-rose-50 border border-rose-300 text-rose-800",
+    approved: "bg-emerald-50/90 border border-emerald-300 text-emerald-900 shadow-xs",
+    pending: "bg-amber-50/90 border border-amber-300 text-amber-900 shadow-xs",
+    rejected: "bg-rose-50/90 border border-rose-300 text-rose-900 shadow-xs",
+    human_review: "bg-purple-50/90 border border-purple-300 text-purple-900 shadow-xs",
+    error: "bg-rose-50 border border-rose-300 text-rose-900",
   };
 
   const es = new EventSource(`/submissions/${subId}/run-stream`);
@@ -114,31 +163,35 @@
       totalScore = Math.min(totalScore + data.score_contribution, 100);
       riskScore.textContent = Math.round(totalScore);
       riskBar.style.width = totalScore + "%";
-      riskBar.className = riskBar.className.replace(/bg-\w+-\d+/, "");
-      if (totalScore >= 50) riskBar.classList.add("bg-red-500");
-      else if (totalScore >= 20) riskBar.classList.add("bg-amber-400");
-      else riskBar.classList.add("bg-green-400");
+      riskBar.className = "h-full rounded-full transition-all duration-500 shadow-xs";
+      if (totalScore >= 50) {
+        riskBar.classList.add("bg-gradient-to-r", "from-orange-500", "to-rose-500");
+      } else if (totalScore >= 20) {
+        riskBar.classList.add("bg-gradient-to-r", "from-yellow-400", "to-amber-500");
+      } else {
+        riskBar.classList.add("bg-gradient-to-r", "from-emerald-500", "to-teal-400");
+      }
     }
 
     // Pipeline error handling
     if (data.check_name === "pipeline_error") {
-      decisionBanner.textContent = "❌ PIPELINE ERROR: " + data.message;
-      decisionBanner.className = "mb-4 rounded-xl p-4 text-center font-semibold text-lg shadow-sm bg-rose-50 border border-rose-300 text-rose-800";
+      decisionBanner.textContent = "Pipeline Error: " + data.message;
+      decisionBanner.className = "rounded-2xl p-5 text-center font-bold text-sm shadow-card bg-rose-50 border border-rose-300 text-rose-900";
       decisionBanner.classList.remove("hidden");
       actionButtons.classList.remove("hidden");
       statusBadge.textContent = "Error";
-      statusBadge.className = "px-3 py-1 rounded-full text-sm font-semibold bg-rose-100 text-rose-700";
+      statusBadge.className = "px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-100 text-rose-700 border border-rose-300";
     }
     if (data.check_name === "final_decision") {
       const outcome = data.status;
       const labels = {
-        approved: "✅ APPROVED",
-        pending: "⚠️ PENDING — Action required",
-        rejected: "❌ REJECTED",
-        human_review: "🔍 HUMAN REVIEW",
+        approved: "Approved — All Verification Checks Passed",
+        pending: "Pending — Corrective Action Required",
+        rejected: "Rejected — Threshold Exceeded",
+        human_review: "Human Review Required",
       };
-      decisionBanner.textContent = labels[outcome] || outcome.toUpperCase();
-      decisionBanner.className = `mb-4 rounded-xl p-4 text-center font-semibold text-lg shadow-sm ${decisionColors[outcome] || "bg-gray-100"}`;
+      decisionBanner.textContent = labels[outcome] || ("Verdict: " + outcome.toUpperCase());
+      decisionBanner.className = `rounded-2xl p-5 text-center font-bold text-sm shadow-card border ${decisionColors[outcome] || "bg-slate-100 text-slate-800"}`;
       decisionBanner.classList.remove("hidden");
       actionButtons.classList.remove("hidden");
       statusBadge.textContent = outcome.replace("_"," ").replace(/\b\w/g,c=>c.toUpperCase());
@@ -146,7 +199,7 @@
       if (outcome === "pending") {
         const resubmitBtn = document.createElement("a");
         resubmitBtn.href = `/submissions/${subId}/resubmit`;
-        resubmitBtn.className = "bg-amber-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition";
+        resubmitBtn.className = "inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-sm transition-all";
         resubmitBtn.textContent = "Resubmit Correction →";
         actionButtons.prepend(resubmitBtn);
       }
@@ -154,17 +207,16 @@
 
     // Add row
     const tr = document.createElement("tr");
-    tr.className = "hover:bg-gray-50";
-    const stageIcon = {extraction:"🔍", validation:"⚙️", decision:"🎯", notification:"📧", pipeline:"🚀"}[data.stage] || "·";
+    tr.className = "hover:bg-slate-50/80 transition-colors";
     const sc = data.score_contribution > 0 ? `+${data.score_contribution}` : "—";
     tr.innerHTML = `
-      <td class="px-4 py-2 text-xs text-gray-400">${stageIcon} ${data.stage}</td>
-      <td class="px-4 py-2 font-mono text-xs text-gray-700">${data.check_name}</td>
-      <td class="px-4 py-2"><span class="px-1.5 py-0.5 rounded text-xs font-semibold ${statusColors[data.status] || 'bg-gray-100 text-gray-500'}">${data.status}</span></td>
-      <td class="px-4 py-2"><span class="px-1.5 py-0.5 rounded text-xs ${sevColors[data.severity] || ''}">${data.severity}</span></td>
-      <td class="px-4 py-2 text-xs text-gray-600 max-w-xs truncate" title="${data.message}">${data.message}</td>
-      <td class="px-4 py-2 text-xs text-right font-mono ${data.score_contribution > 0 ? 'text-orange-600 font-bold' : 'text-gray-300'}">${sc}</td>
-      <td class="px-4 py-2 text-xs text-right text-gray-300">${data.elapsed_ms}</td>
+      <td class="px-4 py-2.5 text-[11px] text-slate-500 uppercase tracking-wider font-mono">[${data.stage}]</td>
+      <td class="px-4 py-2.5 font-mono text-xs font-semibold text-slate-900">${data.check_name}</td>
+      <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[11px] font-semibold ${statusColors[data.status] || 'bg-slate-100 text-slate-600 border border-slate-200'}">${data.status}</span></td>
+      <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[11px] ${sevColors[data.severity] || ''}">${data.severity}</span></td>
+      <td class="px-4 py-2.5 text-xs text-slate-700 max-w-xs truncate" title="${data.message}">${data.message}</td>
+      <td class="px-4 py-2.5 text-xs text-right font-mono ${data.score_contribution > 0 ? 'text-amber-600 font-bold' : 'text-slate-300'}">${sc}</td>
+      <td class="px-4 py-2.5 text-xs text-right font-mono text-slate-400">${data.elapsed_ms}ms</td>
     `;
     tbody.appendChild(tr);
     tr.scrollIntoView({behavior:"smooth", block:"nearest"});
@@ -173,7 +225,7 @@
   es.onerror = function() {
     es.close();
     if (rowCount === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-4 text-center text-red-400 text-sm">Connection error. <a href="" class="underline">Refresh</a></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-6 text-center text-rose-600 text-sm font-medium">Connection interrupted. <a href="" class="underline ml-1">Refresh</a></td></tr>';
     }
   };
 })();
